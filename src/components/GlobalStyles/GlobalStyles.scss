@@ -1,0 +1,100 @@
+@import "normalize.css";
+
+:root {
+  --primary: #ee4d2d;
+  --white: #fff;
+  --text-color: #212121;
+  --text-link: #0088ff;
+
+  // --background-color: rgba(22, 24, 35, 0.06);
+  // --hover-background-color: rgba(22, 24, 35, 0.03);
+  // --after-background-color: rgba(22, 24, 35, 0.12);
+
+  --border-color: rgba(0, 0, 0, 0.09);
+  // --icon-color: rgba(22, 24, 35, 0.34);
+  // --title-color: rgba(22, 24, 35, 0.5);
+  // --input-color: rgba(22, 24, 35, 0.75);
+
+  --font-family: Helvetica Neue, Helvetica, Arial, 文泉驛正黑, WenQuanYi Zen Hei,
+    Hiragino Sans GB, 儷黑 Pro, LiHei Pro, Heiti TC, 微軟正黑體,
+    Microsoft JhengHei UI, Microsoft JhengHei, sans-serif;
+
+  // Default layout
+  // --default-layout-header-height: 60px;
+  // --default-layout-width: 100%;
+  // --default-layout-horizontal-spacer-left: 16px;
+  // --default-layout-horizontal-spacer-right: 24px;
+
+  // Brand
+  --brand-primary-color: #d0011b;
+  --brand-primary-light-color: rgba(208, 1, 27, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  min-height: 100vh;
+  font-family: var(--font-family);
+  font-size: 1.6rem;
+  line-height: 1.2;
+  font-weight: 300;
+  font-style: normal;
+  text-rendering: optimizespeed;
+  -webkit-font-smoothing: antialiased;
+  font-optical-sizing: auto;
+  color: var(--text-color);
+  overflow-y: overlay;
+}
+
+button,
+input,
+[tabindex] {
+  outline: none;
+  border: none;
+}
+
+a {
+  color: var(--text-link);
+  text-decoration: none;
+}
+
+// Custom tippy tooltip
+// body {
+//   .tippy-popper {
+//     background-color: #fff;
+//     color: rgba(0, 0, 0, 0.87);
+//     box-shadow: 0 0.0625rem 3.125rem 0 rgba(0, 0, 0, 0.2);
+//     font-weight: 500;
+//     font-size: 1.6rem;
+//     line-height: 21px;
+//     border-radius: 8px;
+//     text-decoration: none;
+//     &:hover {
+//       background-color: #fafafa;
+//       color: #00bfa5;
+//     }
+//   }
+
+//   .tippy-content {
+//     padding: 8px;
+//   }
+
+//   .tippy-arrow {
+//     display: block;
+//     position: absolute;
+//     top: -8px;
+//     left: 50%;
+//     margin-left: 15px;
+//     width: 36px;
+//     height: 8px;
+//     background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzYiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDM2IDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0wIDhoNi42ODZhOCA4IDAgMCAwIDUuNjU3LTIuMzQzbDQuOTUtNC45NWExIDEgMCAwIDEgMS40MTQgMGw0Ljk1IDQuOTVBOCA4IDAgMCAwIDI5LjMxNCA4SDM2IDB6IiBmaWxsPSIjNTQ1NDU0IiBmaWxsLW9wYWNpdHk9Ii45MiIvPjwvc3ZnPg==);
+//   }
+// }
