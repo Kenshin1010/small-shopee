@@ -3,18 +3,27 @@ import { useEffect, useState } from "react";
 type debouncedType = {
   value: string;
   delay: number;
+  enabled?: boolean;
 };
 
-function useDebounce({ value, delay }: debouncedType) {
+function useDebounce({ value, delay, enabled = true }: debouncedType) {
   const [debouncedValue, setDebouncedValue] = useState(value);
 
   useEffect(() => {
-    const debounceId = setTimeout(() => setDebouncedValue(value), delay);
+    let debounceId: NodeJS.Timeout | null = null;
+
+    if (enabled) {
+      debounceId = setTimeout(() => setDebouncedValue(value), delay);
+    } else {
+      setDebouncedValue(value);
+    }
 
     return () => {
-      clearTimeout(debounceId);
+      if (debounceId) {
+        clearTimeout(debounceId);
+      }
     };
-  }, [value, delay]);
+  }, [value, delay, enabled]);
 
   return debouncedValue;
 }

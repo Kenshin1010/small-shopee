@@ -1,5 +1,11 @@
+import { Grid, Stack } from "@mui/material";
+
 function Nav() {
-  return <div>Nav</div>;
+  return (
+    <Stack>
+      <Grid>Nav</Grid>
+    </Stack>
+  );
 }
 
 export default Nav;

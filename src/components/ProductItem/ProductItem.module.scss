@@ -1,0 +1,43 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  padding: 9px 16px;
+  color: var(--text-color);
+  &:hover {
+    background-color: var(--hover-background-color);
+    cursor: pointer;
+  }
+}
+
+.image {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  margin-right: 12px;
+}
+
+.info {
+  flex: 1;
+  margin-left: 12px;
+}
+
+.title-verified {
+  display: flex;
+}
+
+.title {
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.verified {
+  margin-left: 4px;
+  font-size: 1.4rem;
+  color: var(--checked-color);
+}
+
+.subtitle {
+  font-size: 1.4rem;
+  font-weight: 300;
+  color: var(--title-color);
+}
