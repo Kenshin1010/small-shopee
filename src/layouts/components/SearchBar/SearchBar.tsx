@@ -9,7 +9,7 @@ import SearchIcon from "../icons-tsx/SearchIcon";
 
 import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
 import RotateLeftOutlinedIcon from "@mui/icons-material/RotateLeftOutlined";
-import { Box, Button, Grid } from "@mui/material";
+import { Button, Container, Grid } from "@mui/material";
 import { ProductDataType } from "../../../components/ProductItem/ProductItem";
 import { Book, getNewBooks, searchBooks } from "../../../services";
 
@@ -145,13 +145,22 @@ function SearchBar() {
   return (
     // Using a wrapper <div> or <span> tag around the reference element
     // solves this by creating a new parentNode context.
-    <span>
-      <HeadlessTippy
-        interactive
-        visible={showResult && searchResult.length > 0}
-        render={(attrs) => (
-          <Box className={cx("search-results")} tabIndex={-1} {...attrs}>
-            <Grid>
+    <Container>
+      <Grid xs={12} sm={12} md={12} lg={12} xl={12} container>
+        <HeadlessTippy
+          interactive
+          visible={showResult && searchResult.length > 0}
+          render={(attrs) => (
+            <Grid
+              xs={12}
+              sm={10}
+              md={6}
+              lg={6}
+              xl={6}
+              className={cx("search-results")}
+              tabIndex={-1}
+              {...attrs}
+            >
               <h4 className={cx("search-title")}>Books</h4>
               {searchResult.map((result: ProductDataType) => (
                 <Button
@@ -172,38 +181,38 @@ function SearchBar() {
                 </Button>
               ))}
             </Grid>
-          </Box>
-        )}
-        onClickOutside={handleHideResult}
-      >
-        <Box className={cx("search")}>
-          <input
-            ref={inputRef}
-            value={searchValue}
-            placeholder="Search"
-            onChange={handleChange}
-            onFocus={() => {
-              handleShowResult();
-            }}
-            onKeyDown={handleKeyDown}
-          />
-          {!!searchValue && !loading && (
-            <button
-              className={cx("clear")}
-              onClick={() => {
-                handleClear();
-              }}
-            >
-              <ClearOutlinedIcon />
-            </button>
           )}
-          {loading && <RotateLeftOutlinedIcon />}
-          <Button className={cx("search-btn")} onMouseDown={handleSubmit}>
-            <SearchIcon />
-          </Button>
-        </Box>
-      </HeadlessTippy>
-    </span>
+          onClickOutside={handleHideResult}
+        >
+          <Grid xs={12} sm={10} md={6} lg={6} xl={6} className={cx("search")}>
+            <input
+              ref={inputRef}
+              value={searchValue}
+              placeholder="Search"
+              onChange={handleChange}
+              onFocus={() => {
+                handleShowResult();
+              }}
+              onKeyDown={handleKeyDown}
+            />
+            {!!searchValue && !loading && (
+              <button
+                className={cx("clear")}
+                onClick={() => {
+                  handleClear();
+                }}
+              >
+                <ClearOutlinedIcon />
+              </button>
+            )}
+            {loading && <RotateLeftOutlinedIcon />}
+            <Button className={cx("search-btn")} onMouseDown={handleSubmit}>
+              <SearchIcon />
+            </Button>
+          </Grid>
+        </HeadlessTippy>
+      </Grid>
+    </Container>
   );
 }
 

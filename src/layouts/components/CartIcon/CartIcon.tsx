@@ -21,6 +21,7 @@ function CartIcon() {
       onClick={() => {
         navigate(`/cart`);
       }}
+      sx={{ marginRight: "48px" }}
     >
       <StyledBadge badgeContent={4} color="secondary">
         <ShoppingCartIcon />
