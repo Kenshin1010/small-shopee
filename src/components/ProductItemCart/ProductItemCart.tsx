@@ -22,33 +22,34 @@ export type ProductItemCartType = {
   REDUCER_ACTIONS: ReducerActionType;
 };
 
-function ProductItemCart({
-  product,
-  dispatch,
-  REDUCER_ACTIONS,
-}: ProductItemCartType): ReactElement {
-  const lineTotal: number = product.quantity * parseInt(product.price);
+function ProductItemCart(props: ProductItemCartType): ReactElement {
+  const { product, dispatch, REDUCER_ACTIONS } = props;
+  const lineTotal: number = product.quantity * parseFloat(product.price);
 
   const [quantity, setQuantity] = useState(product.quantity);
 
   const incrementQuantity = () => {
     setQuantity((prevQuantity) => {
+      const newQuantity = prevQuantity + 1;
       dispatch({
         type: REDUCER_ACTIONS.QUANTITY,
-        payload: { ...product, quantity: prevQuantity + 1 },
+        payload: {
+          product: { ...product, quantity: newQuantity },
+        },
       });
-      return prevQuantity + 1;
+      return newQuantity;
     });
   };
 
   const decrementQuantity = () => {
     if (quantity > 1) {
       setQuantity((prevQuantity) => {
+        const newQuantity = prevQuantity - 1;
         dispatch({
           type: REDUCER_ACTIONS.QUANTITY,
-          payload: { ...product, quantity: prevQuantity - 1 },
+          payload: { product: { ...product, quantity: newQuantity } },
         });
-        return prevQuantity - 1;
+        return newQuantity;
       });
     }
   };
@@ -56,7 +57,7 @@ function ProductItemCart({
   const onRemoveFromCart = () =>
     dispatch({
       type: REDUCER_ACTIONS.REMOVE,
-      payload: { isbn13: product.isbn13 },
+      payload: { product },
     });
   return (
     <Stack
@@ -86,7 +87,7 @@ function ProductItemCart({
           <Typography>{quantity}</Typography>
           <Button onClick={incrementQuantity}>+</Button>
         </Stack>
-        <span className={cx("total-price")}>{lineTotal}</span>
+        <span className={cx("total-price")}>{lineTotal.toFixed(2)}</span>
         <Button>
           <DeleteIcon
             className={cx("delete-icon")}

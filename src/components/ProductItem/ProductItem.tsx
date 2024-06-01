@@ -10,7 +10,7 @@ const cx = classNames.bind(styles);
 export type ProductDataType = {
   id?: number;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   isbn13?: number;
   price: string;
   image: string;

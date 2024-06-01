@@ -8,14 +8,14 @@ import { DataProvider } from "./context/DataProvider.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <CartProvider>
-      <DataProvider>
+    <DataProvider>
+      <CartProvider>
         <ProductsProvider>
           <GlobalStyles>
             <App />
           </GlobalStyles>
         </ProductsProvider>
-      </DataProvider>
-    </CartProvider>
+      </CartProvider>
+    </DataProvider>
   </React.StrictMode>
 );
