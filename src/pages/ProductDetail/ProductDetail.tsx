@@ -14,9 +14,9 @@ function ProductDetail() {
 
   return (
     <>
-      <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} spacing={1}>
+      <Grid container xs={12} sm={12} md={12} lg={12} xl={12} spacing={1}>
         {data && (
-          <Grid key={data.id} item xs={12} sm={8} md={8} lg={8}>
+          <Grid item key={data.id} xs={12} sm={8} md={8} lg={8}>
             <Paper>
               <ProductItemDetail
                 data={data}

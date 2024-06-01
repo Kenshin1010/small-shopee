@@ -1,15 +1,22 @@
-import { Grid, Paper } from "@mui/material";
+import { Box, Button, Grid, Paper, Typography } from "@mui/material";
+import { useState } from "react";
 import ProductItemCart from "../../components/ProductItemCart/ProductItemCart";
-import { useContext } from "react";
-import { CartContext } from "../../context/CartProvider";
+import useCart from "../../hooks/useCart";
 
 function Cart() {
-  const { cart, dispatch, REDUCER_ACTIONS } = useContext(CartContext);
-  return (
+  const [confirm, setConfirm] = useState<boolean>(false);
+  const { dispatch, REDUCER_ACTIONS, totalItems, totalPrice, cart } = useCart();
+  const onSubmitOrder = () => {
+    dispatch({ type: REDUCER_ACTIONS.SUBMIT });
+    setConfirm(true);
+  };
+  const pageContent = confirm ? (
+    <h2>Thank you for your order.</h2>
+  ) : (
     <>
-      <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} spacing={2}>
+      <Grid container spacing={2}>
         {cart.map((item) => (
-          <Grid key={item.product.isbn13} item xs={12} sm={12} md={12} lg={10}>
+          <Grid item key={item.product.isbn13} xs={12} sm={12} md={12} lg={12}>
             <Paper>
               <ProductItemCart
                 product={item.product}
@@ -19,9 +26,22 @@ function Cart() {
             </Paper>
           </Grid>
         ))}
+        <Grid item xs={12} sm={12} md={12} lg={12}>
+          <Paper>
+            <Box sx={{ textAlign: "center" }}>
+              <Typography>Total Items: {totalItems}</Typography>
+              <Typography>Total Price: {totalPrice}</Typography>
+              <Button onClick={onSubmitOrder} disabled={!totalItems}>
+                Place Order
+              </Button>
+            </Box>
+          </Paper>
+        </Grid>
       </Grid>
     </>
   );
+  const content = <main className={"main main__cart"}>{pageContent}</main>;
+  return content;
 }
 
 export default Cart;

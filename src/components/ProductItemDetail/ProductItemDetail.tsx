@@ -56,8 +56,13 @@ function ProductItemDetail(props: ProductItemDetailType): ReactElement {
 
   return (
     <Box className={cx("wrapper")}>
-      <ProductImage className={cx("image")} src={data.image} alt={data.title} />
-      <div className={cx("info")}>
+      <ProductImage
+        className={cx("image")}
+        src={data.image}
+        alt={data.title}
+        style={{ width: "100%" }}
+      />
+      <Box className={cx("info")}>
         <div className={cx("title-verified")}>
           <h4 className={cx("title")}>{data.title}</h4>
         </div>
@@ -66,7 +71,7 @@ function ProductItemDetail(props: ProductItemDetailType): ReactElement {
         <Button onClick={handleAddToCart} disabled={inCart}>
           {inCart ? "In Cart" : "Add To Cart"}
         </Button>
-      </div>
+      </Box>
     </Box>
   );
 }

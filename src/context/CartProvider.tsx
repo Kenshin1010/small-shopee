@@ -23,14 +23,13 @@ const reducer = (
   state: CartStateType,
   action: ReducerAction
 ): CartStateType => {
-  if (!action.payload || !action.payload.product) {
-    console.error("Action payload or product is missing", action);
-    return state;
-  }
-  const { isbn13, title, price, quantity, image } = action.payload.product;
-
   switch (action.type) {
     case REDUCER_ACTION_TYPE.ADD: {
+      if (!action.payload || !action.payload.product) {
+        console.error("Action payload or product is missing", action);
+        return state;
+      }
+      const { isbn13, title, price, quantity, image } = action.payload.product;
       const updatedCart = updateCart(
         state.cart,
         isbn13,
@@ -44,10 +43,20 @@ const reducer = (
       return { ...state, cart: updatedCart };
     }
     case REDUCER_ACTION_TYPE.REMOVE: {
+      if (!action.payload || !action.payload.product) {
+        console.error("Action payload or product is missing", action);
+        return state;
+      }
+      const { isbn13 } = action.payload.product;
       const updatedCart = removeCartItem(state.cart, isbn13);
       return { ...state, cart: updatedCart };
     }
     case REDUCER_ACTION_TYPE.QUANTITY: {
+      if (!action.payload || !action.payload.product) {
+        console.error("Action payload or product is missing", action);
+        return state;
+      }
+      const { isbn13, quantity } = action.payload.product;
       const updatedCart = updateCartItemQuantity(state.cart, isbn13, quantity);
       return { ...state, cart: updatedCart };
     }
@@ -118,15 +127,15 @@ const useCartContext = (initCartState: CartStateType) => {
   const totalItems = state.cart.reduce((previousValue, cartItem) => {
     return previousValue + cartItem.product.quantity;
   }, 0);
+
   const totalPrice = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
   }).format(
     state.cart.reduce((previousValue, cartItem) => {
-      return (
-        previousValue +
-        cartItem.product.quantity * parseFloat(cartItem.product.price)
-      );
+      const priceCartItemAsString = cartItem.product.price.replace("$", "");
+      const priceCartItemAsNumber = parseFloat(priceCartItemAsString);
+      return previousValue + cartItem.product.quantity * priceCartItemAsNumber;
     }, 0)
   );
 

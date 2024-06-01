@@ -2,7 +2,7 @@ import classNames from "classnames/bind";
 import styles from "./ProductItemCart.module.scss";
 
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Button, Stack, Typography } from "@mui/material";
+import { Button, Input, Stack } from "@mui/material";
 import { ReactElement, useState } from "react";
 import { ReducerAction, ReducerActionType } from "../../context/CartProvider";
 import ProductImage from "../Image/ProductImage";
@@ -24,7 +24,9 @@ export type ProductItemCartType = {
 
 function ProductItemCart(props: ProductItemCartType): ReactElement {
   const { product, dispatch, REDUCER_ACTIONS } = props;
-  const lineTotal: number = product.quantity * parseFloat(product.price);
+  const priceAsString = product.price.replace("$", "");
+  const priceAsNumber = parseFloat(priceAsString);
+  const lineTotal: number = product.quantity * priceAsNumber;
 
   const [quantity, setQuantity] = useState(product.quantity);
 
@@ -54,6 +56,17 @@ function ProductItemCart(props: ProductItemCartType): ReactElement {
     }
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newQuantity = parseInt(e.target.value, 10);
+    if (!isNaN(newQuantity) && newQuantity > 0) {
+      setQuantity(newQuantity);
+      dispatch({
+        type: REDUCER_ACTIONS.QUANTITY,
+        payload: { product: { ...product, quantity: newQuantity } },
+      });
+    }
+  };
+
   const onRemoveFromCart = () =>
     dispatch({
       type: REDUCER_ACTIONS.REMOVE,
@@ -70,24 +83,51 @@ function ProductItemCart(props: ProductItemCartType): ReactElement {
         className={cx("image")}
         src={product.image}
         alt="product.image"
+        style={{ width: "100px" }}
       />
       <Stack
-        direction={{ xs: "column", md: "row" }}
-        alignItems={{ xs: "flex-end", md: "center" }}
-        justifyContent={{ xs: "flex-start", md: "space-between" }}
+        direction={{ xs: "column", sm: "row" }}
+        alignItems={{ xs: "flex-end", sm: "center" }}
+        justifyContent={{ xs: "flex-start", sm: "space-evenly" }}
+        sx={{ paddingRight: { xs: "48px", sm: "24px" } }}
         className={cx("info")}
       >
-        <span className={cx("unit-price")}>{product.price}</span>
+        <span className={cx("unit-price")}>
+          {new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+          }).format(priceAsNumber)}
+        </span>
         <Stack
           direction={"row"}
           alignItems={"center"}
           className={cx("quantity")}
         >
-          <Button onClick={decrementQuantity}>-</Button>
-          <Typography>{quantity}</Typography>
-          <Button onClick={incrementQuantity}>+</Button>
+          <Button onClick={decrementQuantity} sx={{ minWidth: "42px" }}>
+            -
+          </Button>
+          <Input
+            value={quantity}
+            onChange={handleChange}
+            sx={{
+              width: "50px",
+              textAlign: "center",
+              "& input": { textAlign: "center" },
+              "&:focus-within": { borderBottom: "none" },
+              outline: "1px solid rgba(22, 24, 35, 0.75)",
+            }}
+            disableUnderline
+          />
+          <Button onClick={incrementQuantity} sx={{ minWidth: "42px" }}>
+            +
+          </Button>
         </Stack>
-        <span className={cx("total-price")}>{lineTotal.toFixed(2)}</span>
+        <span className={cx("total-price")}>
+          {new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+          }).format(lineTotal)}
+        </span>
         <Button>
           <DeleteIcon
             className={cx("delete-icon")}

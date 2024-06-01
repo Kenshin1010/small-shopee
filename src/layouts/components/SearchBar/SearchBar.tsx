@@ -146,12 +146,13 @@ function SearchBar() {
     // Using a wrapper <div> or <span> tag around the reference element
     // solves this by creating a new parentNode context.
     <Container>
-      <Grid xs={12} sm={12} md={12} lg={12} xl={12} container>
+      <Grid container>
         <HeadlessTippy
           interactive
           visible={showResult && searchResult.length > 0}
           render={(attrs) => (
             <Grid
+              item
               xs={12}
               sm={10}
               md={6}
@@ -184,7 +185,15 @@ function SearchBar() {
           )}
           onClickOutside={handleHideResult}
         >
-          <Grid xs={12} sm={10} md={6} lg={6} xl={6} className={cx("search")}>
+          <Grid
+            item
+            xs={12}
+            sm={10}
+            md={6}
+            lg={6}
+            xl={6}
+            className={cx("search")}
+          >
             <input
               ref={inputRef}
               value={searchValue}

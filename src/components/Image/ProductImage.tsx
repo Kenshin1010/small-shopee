@@ -11,6 +11,7 @@ export type ProductImageType = {
   src: string;
   alt?: string;
   fallback?: string;
+  style: React.CSSProperties;
 };
 
 const ProductImage = forwardRef<HTMLImageElement, ProductImageType>(
