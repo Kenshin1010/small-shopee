@@ -11,7 +11,7 @@ const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
     top: 0,
     border: `2px solid ${theme.palette.background.paper}`,
     padding: "0 4px",
-    bgcolor: "var(--primary)",
+    bgcolor: "#ee4d2d",
   },
 }));
 function CartIcon() {

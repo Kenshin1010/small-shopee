@@ -21,8 +21,9 @@ const ProductImage = forwardRef<HTMLImageElement, ProductImageType>(
       src,
       alt = "",
       fallback: customFallback = images.noImage,
+      style,
       ...props
-    }: { className?: string; src: string; alt?: string; fallback?: string },
+    },
     ref: ForwardedRef<HTMLImageElement>
   ) => {
     const [fallback, setFallback] = useState<string | undefined>();
@@ -37,6 +38,7 @@ const ProductImage = forwardRef<HTMLImageElement, ProductImageType>(
           ref={ref}
           src={fallback || src}
           alt={alt}
+          style={style}
           {...props}
           onError={handleError}
         />
