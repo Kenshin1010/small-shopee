@@ -66,13 +66,19 @@ export const getBookByISBN = async (
 };
 
 // Ví dụ: Tìm kiếm sách với query là "mongodb"
-const books = await searchBooks("mongodb");
-console.log(books);
+(async () => {
+  const books = await searchBooks("mongodb");
+  console.log(books);
+})();
 
 // Ví dụ: Lấy sách mới nhất
-const newBooks = await getNewBooks();
-console.log(newBooks);
+(async () => {
+  const newBooks = await getNewBooks();
+  console.log(newBooks);
+})();
 
 // Ví dụ: Lấy thông tin chi tiết về sách có ISBN là "9781617294136"
-const bookDetails = await getBookByISBN("9781617294136");
-console.log(bookDetails);
+(async () => {
+  const bookDetails = await getBookByISBN("9781617294136");
+  console.log(bookDetails);
+})();

@@ -5,4 +5,7 @@ import vitePluginSass from "vite-plugin-sass-glob-import";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), vitePluginSass()],
+  esbuild: {
+    target: ["chrome89", "edge89", "firefox89", "safari15"],
+  },
 });
