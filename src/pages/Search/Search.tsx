@@ -1,6 +1,6 @@
 import ProductContent from "../../layouts/components/ProductContent/ProductContent";
 
-function Home() {
+function Search() {
   return (
     <>
       <ProductContent />
@@ -8,4 +8,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Search;

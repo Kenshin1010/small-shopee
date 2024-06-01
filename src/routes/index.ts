@@ -9,6 +9,7 @@ import Cart from "../pages/Cart/Cart";
 import Home from "../pages/Home/Home";
 import ProductDetail from "../pages/ProductDetail/ProductDetail";
 import Purchase from "../pages/Purchase/Purchase";
+import Search from "../pages/Search/Search";
 
 // Public routes
 const publicRoutes = [
@@ -32,6 +33,10 @@ const publicRoutes = [
     path: config.routes.addnew,
     component: AddNewProduct,
     layout: NavOnly,
+  },
+  {
+    path: config.routes.search,
+    component: Search,
   },
 ];
 

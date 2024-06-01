@@ -1,8 +1,8 @@
 import classNames from "classnames/bind";
 import styles from "./ProductItem.module.scss";
 
-import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
-import { Link } from "react-router-dom";
+import { Box } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import ProductImage from "../Image/ProductImage";
 
 const cx = classNames.bind(styles);
@@ -15,22 +15,29 @@ export type ProductDataType = {
   price: string;
   image: string;
   url?: string;
-  tick?: boolean;
+  quantity?: number;
 };
 
 function ProductItem(data: ProductDataType) {
+  const navigate = useNavigate();
   return (
-    <Link to={`/@${data.subtitle}`} className={cx("wrapper")}>
+    <Box
+      onClick={() => {
+        navigate(`/detail?keyword=${encodeURIComponent(data.title.trim())}`, {
+          state: { ...data },
+        });
+      }}
+      className={cx("wrapper")}
+    >
       <ProductImage className={cx("image")} src={data.image} alt="data.image" />
       <div className={cx("info")}>
         <div className={cx("title-verified")}>
           <h4 className={cx("title")}>{data.title}</h4>
-          {data.tick && <CheckOutlinedIcon className={cx("verified")} />}
         </div>
         <span className={cx("subtitle")}>{data.subtitle}</span>
         <span className={cx("price")}>{data.price}</span>
       </div>
-    </Link>
+    </Box>
   );
 }
 

@@ -1,5 +1,7 @@
+import GetDataLocalStorage from "../../components/GetData/GetDataLocalStorage";
+
 function AddNewProduct() {
-  return <h2>AddNewProductpage</h2>;
+  return <GetDataLocalStorage />;
 }
 
 export default AddNewProduct;

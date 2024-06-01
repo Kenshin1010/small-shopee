@@ -6,14 +6,14 @@
   --text-color: #212121;
   --text-link: #0088ff;
 
-  // --background-color: rgba(22, 24, 35, 0.06);
-  // --hover-background-color: rgba(22, 24, 35, 0.03);
-  // --after-background-color: rgba(22, 24, 35, 0.12);
+  --background-color: rgba(22, 24, 35, 0.06);
+  --hover-background-color: rgba(22, 24, 35, 0.03);
+  --after-background-color: rgba(22, 24, 35, 0.12);
 
   --border-color: rgba(0, 0, 0, 0.09);
-  // --icon-color: rgba(22, 24, 35, 0.34);
-  // --title-color: rgba(22, 24, 35, 0.5);
-  // --input-color: rgba(22, 24, 35, 0.75);
+  --icon-color: rgba(22, 24, 35, 0.34);
+  --title-color: rgba(22, 24, 35, 0.5);
+  --input-color: rgba(22, 24, 35, 0.75);
   --search-bottom-width: 52px;
 
   --font-family: Helvetica Neue, Helvetica, Arial, 文泉驛正黑, WenQuanYi Zen Hei,
@@ -21,10 +21,10 @@
     Microsoft JhengHei UI, Microsoft JhengHei, sans-serif;
 
   // Default layout
-  // --default-layout-header-height: 60px;
-  // --default-layout-width: 100%;
-  // --default-layout-horizontal-spacer-left: 16px;
-  // --default-layout-horizontal-spacer-right: 24px;
+  --default-layout-header-height: 60px;
+  --default-layout-width: 1402px;
+  --default-layout-horizontal-spacer-left: 16px;
+  --default-layout-horizontal-spacer-right: 24px;
 
   // Brand
   --brand-primary-color: #d0011b;

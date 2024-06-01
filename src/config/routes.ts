@@ -4,6 +4,7 @@ const routes = {
   cart: "/cart",
   purchase: "/purchase",
   addnew: "/addnew",
+  search: "/search",
 };
 
 export default routes;

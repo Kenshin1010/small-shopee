@@ -1,5 +1,5 @@
 import classNames from "classnames/bind";
-import styles from "./Search.module.scss";
+import styles from "./SearchBar.module.scss";
 
 import HeadlessTippy from "@tippyjs/react/headless";
 import { ChangeEvent, MouseEvent, useEffect, useRef, useState } from "react";
@@ -10,17 +10,25 @@ import SearchIcon from "../icons-tsx/SearchIcon";
 import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
 import RotateLeftOutlinedIcon from "@mui/icons-material/RotateLeftOutlined";
 import { Box, Button, Grid } from "@mui/material";
-import ProductItem, {
-  ProductDataType,
-} from "../../../components/ProductItem/ProductItem";
+import { ProductDataType } from "../../../components/ProductItem/ProductItem";
 import { Book, getNewBooks, searchBooks } from "../../../services";
+
+import { useNavigate } from "react-router-dom";
+import { useData } from "../../../hooks/useData";
 
 const cx = classNames.bind(styles);
 
-function Search() {
+function SearchBar() {
   const [searchValue, setSearchValue] = useState("");
-  const [dataResult, setDataResult] = useState<ProductDataType[]>([]);
-  const [searchResult, setSearchResult] = useState<ProductDataType[]>([]);
+  // const [dataResult, setDataResult] = useState<ProductDataType[]>([]);
+  // const [searchResult, setSearchResult] = useState<ProductDataType[]>([]);
+  const {
+    searchResult = [],
+    dataResult = [],
+    setSearchResult = () => {},
+    setDataResult = () => {},
+  } = useData();
+
   const [inputFocused, setInputFocused] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -28,6 +36,12 @@ function Search() {
   useEffect(() => {
     const fetchNewBooks = async () => {
       const newBooks: Book[] = await getNewBooks();
+      // const storedBooks = localStorage.getItem("newBooks");
+
+      // let newBooks: Book[] = [];
+      // if (storedBooks) {
+      //   newBooks = JSON.parse(storedBooks);
+      // }
 
       const newBook: ProductDataType[] = newBooks.map((data, index) => ({
         id: index,
@@ -85,6 +99,7 @@ function Search() {
     setSearchValue("");
     setSearchResult([]);
     inputRef.current?.focus();
+    navigate(`/search`);
   };
 
   const handleHideResult = () => {
@@ -104,18 +119,28 @@ function Search() {
     }
   };
 
+  const navigate = useNavigate();
+
   const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     // inputRef.current?.focus();
+    const trimmedValue = searchValue.trim();
+    if (trimmedValue) {
+      navigate(`/search?keyword=${encodeURIComponent(searchValue.trim())}`);
+      setShowResult(false);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
-      handleSubmit;
+      e.preventDefault(); // Ensure the default form submission is prevented
+      setShowResult(false);
+      const trimmedValue = searchValue.trim();
+      if (trimmedValue) {
+        navigate(`/search?keyword=${encodeURIComponent(searchValue.trim())}`);
+      }
     }
   };
-
-  console.log(searchResult);
 
   return (
     // Using a wrapper <div> or <span> tag around the reference element
@@ -129,7 +154,22 @@ function Search() {
             <Grid>
               <h4 className={cx("search-title")}>Books</h4>
               {searchResult.map((result: ProductDataType) => (
-                <Box key={result.id}>{result.title}</Box>
+                <Button
+                  className={cx("search-title-book")}
+                  key={result.id}
+                  onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                    e.preventDefault();
+                    setShowResult(false);
+                    navigate(
+                      `/detail?keyword=${encodeURIComponent(
+                        result.title.trim()
+                      )}`,
+                      { state: { ...result } }
+                    );
+                  }}
+                >
+                  {result.title}
+                </Button>
               ))}
             </Grid>
           </Box>
@@ -148,14 +188,14 @@ function Search() {
             onKeyDown={handleKeyDown}
           />
           {!!searchValue && !loading && (
-            <Button
+            <button
               className={cx("clear")}
               onClick={() => {
                 handleClear();
               }}
             >
               <ClearOutlinedIcon />
-            </Button>
+            </button>
           )}
           {loading && <RotateLeftOutlinedIcon />}
           <Button className={cx("search-btn")} onMouseDown={handleSubmit}>
@@ -163,30 +203,8 @@ function Search() {
           </Button>
         </Box>
       </HeadlessTippy>
-      {searchResult.length > 0 &&
-        searchResult.map((result: ProductDataType) => (
-          <ProductItem
-            key={result.id}
-            title={result.title}
-            subtitle={result.subtitle}
-            isbn13={result.isbn13}
-            price={result.price}
-            image={result.image}
-          />
-        ))}
-      {searchResult.length === 0 &&
-        dataResult.map((newBook: ProductDataType) => (
-          <ProductItem
-            key={newBook.id}
-            title={newBook.title}
-            subtitle={newBook.subtitle}
-            isbn13={newBook.isbn13}
-            price={newBook.price}
-            image={newBook.image}
-          />
-        ))}
     </span>
   );
 }
 
-export default Search;
+export default SearchBar;
