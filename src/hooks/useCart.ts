@@ -3,7 +3,23 @@ import CartContext from "../context/CartProvider";
 import { UseCartContextType } from "../context/CartProvider";
 
 const useCart = (): UseCartContextType => {
-  return useContext(CartContext);
+  const {
+    cart,
+    dispatch,
+    REDUCER_ACTIONS,
+    totalItems,
+    totalPrice,
+    totalUniqueItems,
+  } = useContext(CartContext);
+
+  return {
+    cart,
+    dispatch,
+    REDUCER_ACTIONS,
+    totalItems,
+    totalPrice,
+    totalUniqueItems,
+  };
 };
 
 export default useCart;

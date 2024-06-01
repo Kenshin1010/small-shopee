@@ -1,15 +1,24 @@
 import { Box, Button, Grid, Paper, Typography } from "@mui/material";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ProductItemCart from "../../components/ProductItemCart/ProductItemCart";
 import useCart from "../../hooks/useCart";
 
 function Cart() {
   const [confirm, setConfirm] = useState<boolean>(false);
   const { dispatch, REDUCER_ACTIONS, totalItems, totalPrice, cart } = useCart();
+  const navigate = useNavigate();
+
   const onSubmitOrder = () => {
     dispatch({ type: REDUCER_ACTIONS.SUBMIT });
     setConfirm(true);
+    const currentTime = Date.now();
+    const orderName = `${currentTime}_purchased`;
+    localStorage.setItem(orderName, JSON.stringify(cart));
+
+    navigate(`/purchase?keyword=${encodeURIComponent(currentTime)}`, {});
   };
+
   const pageContent = confirm ? (
     <h2>Thank you for your order.</h2>
   ) : (

@@ -145,7 +145,16 @@ const useCartContext = (initCartState: CartStateType) => {
     REDUCER_ACTIONS,
   }));
 
-  return { dispatch, REDUCER_ACTIONS, totalItems, totalPrice, cart };
+  const totalUniqueItems = cart.length;
+
+  return {
+    dispatch,
+    REDUCER_ACTIONS,
+    totalItems,
+    totalPrice,
+    cart,
+    totalUniqueItems,
+  };
 };
 
 export type UseCartContextType = ReturnType<typeof useCartContext>;
@@ -156,6 +165,7 @@ const initCartContextState: UseCartContextType = {
   totalItems: 0,
   totalPrice: "",
   cart: [],
+  totalUniqueItems: 0,
 };
 
 export const CartContext =

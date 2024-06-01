@@ -3,6 +3,7 @@ import Badge, { BadgeProps } from "@mui/material/Badge";
 import IconButton from "@mui/material/IconButton";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
+import useCart from "../../../hooks/useCart";
 
 const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -15,6 +16,7 @@ const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
 }));
 function CartIcon() {
   const navigate = useNavigate();
+  const { totalUniqueItems } = useCart();
   return (
     <IconButton
       aria-label="cart"
@@ -23,7 +25,7 @@ function CartIcon() {
       }}
       sx={{ marginRight: "48px" }}
     >
-      <StyledBadge badgeContent={4} color="secondary">
+      <StyledBadge badgeContent={totalUniqueItems} color="secondary">
         <ShoppingCartIcon />
       </StyledBadge>
     </IconButton>
