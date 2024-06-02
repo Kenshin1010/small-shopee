@@ -9,7 +9,7 @@ import SearchIcon from "../icons-tsx/SearchIcon";
 
 import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
 import RotateLeftOutlinedIcon from "@mui/icons-material/RotateLeftOutlined";
-import { Button, Container, Grid, Tooltip } from "@mui/material";
+import { Button, Container, Grid, Paper, Tooltip } from "@mui/material";
 import { ProductDataType } from "../../../components/ProductItem/ProductItem";
 import { Book, getNewBooks, searchBooks } from "../../../services";
 
@@ -163,24 +163,40 @@ function SearchBar() {
               {...attrs}
             >
               <h4 className={cx("search-title")}>Books</h4>
-              {searchResult.map((result: ProductDataType) => (
-                <Button
-                  className={cx("search-title-book")}
-                  key={result.id}
-                  onClick={(e: MouseEvent<HTMLButtonElement>) => {
-                    e.preventDefault();
-                    setShowResult(false);
-                    navigate(
-                      `/detail?keyword=${encodeURIComponent(
-                        result.title.trim()
-                      )}`,
-                      { state: { ...result } }
-                    );
-                  }}
-                >
-                  {result.title}
-                </Button>
-              ))}
+              <Paper sx={{ width: "100%" }}>
+                {searchResult.map((result: ProductDataType) => (
+                  <Button
+                    className={cx("search-title-book")}
+                    key={result.id}
+                    sx={{
+                      width: "100%",
+                      fontSize: "14px",
+                      minHeight: "1.4rem",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      padding: "10px",
+                      cursor: "pointer",
+                      bgcolor: "rgba(22, 24, 35, 0.03)",
+                      "&:hover": {
+                        backgroundColor: "rgba(22, 24, 35, 0.12)",
+                      },
+                    }}
+                    onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                      e.preventDefault();
+                      setShowResult(false);
+                      navigate(
+                        `/detail?keyword=${encodeURIComponent(
+                          result.title.trim()
+                        )}`,
+                        { state: { ...result } }
+                      );
+                    }}
+                  >
+                    {result.title}
+                  </Button>
+                ))}
+              </Paper>
             </Grid>
           )}
           onClickOutside={handleHideResult}
@@ -205,18 +221,33 @@ function SearchBar() {
               onKeyDown={handleKeyDown}
             />
             {!!searchValue && !loading && (
-              <button
+              <ClearOutlinedIcon
                 className={cx("clear")}
                 onClick={() => {
                   handleClear();
                 }}
-              >
-                <ClearOutlinedIcon />
-              </button>
+              />
             )}
-            {loading && <RotateLeftOutlinedIcon />}
+            {loading && <RotateLeftOutlinedIcon className={cx("loading")} />}
             <Tooltip arrow disableFocusListener title={"Search"}>
-              <Button className={cx("search-btn")} onMouseDown={handleSubmit}>
+              <Button
+                className={cx("search-btn")}
+                onMouseDown={handleSubmit}
+                sx={{
+                  minWidth: "none",
+
+                  "&.MuiButtonBase-root.MuiButton-root": {
+                    color: "rgba(22, 24, 35, 0.34)",
+                    bgcolor: "rgba(22, 24, 35, 0.03)",
+                    borderRadius: "none",
+                  },
+                  "&.MuiButtonBase-root.MuiButton-root:hover": {
+                    color: "#212121",
+                    bgcolor: "rgba(22, 24, 35, 0.12)",
+                    borderRadius: "none",
+                  },
+                }}
+              >
                 <SearchIcon />
               </Button>
             </Tooltip>

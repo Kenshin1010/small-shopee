@@ -112,6 +112,8 @@ button {
   border-top-right-radius: var(--search-border-radius);
   border-bottom-right-radius: var(--search-border-radius);
   color: var(--icon-color);
+  line-height: 16px;
+  padding: 6px 12px;
 
   &:hover {
     cursor: pointer;

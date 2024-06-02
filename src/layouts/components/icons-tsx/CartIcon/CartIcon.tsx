@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import useCart from "../../../../hooks/useCart";
 
 const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
-  "& .MuiBadge-badge": {
+  "& .MuiBadge-badge.custom-badge": {
     right: -3,
     top: 0,
     border: `2px solid ${theme.palette.background.paper}`,
@@ -27,8 +27,16 @@ function CartIcon() {
         }}
         sx={{ marginRight: "48px" }}
       >
-        <StyledBadge badgeContent={totalUniqueItems} color="secondary">
-          <ShoppingCartIcon sx={{ fontSize: "32px" }} />
+        <StyledBadge
+          className="custom-badge"
+          badgeContent={totalUniqueItems}
+          color="secondary"
+        >
+          <ShoppingCartIcon
+            sx={{
+              fontSize: "32px",
+            }}
+          />
         </StyledBadge>
       </IconButton>
     </Tooltip>
