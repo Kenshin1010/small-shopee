@@ -1,6 +1,10 @@
 import { Button, Grid, Paper } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import ProductItem from "../ProductItem/ProductItem";
+import classNames from "classnames/bind";
+import styles from "./ProductAddNewForm.module.scss";
+
+const cx = classNames.bind(styles);
 
 type Product = {
   title: string;
@@ -10,19 +14,24 @@ type Product = {
   image: string;
 };
 
-export const formatPrice = (price: string | number) => {
-  // Chuyển đổi giá trị sang kiểu số nếu nó là một chuỗi số
+export const formatPrice = (price: string | number | undefined) => {
+  // Check if price is null, undefined, or empty string
+  if (price === null || price === undefined || price === "") {
+    return "Price not available";
+  }
+
+  // Convert value to a numeric type if it's a string
   const numericPrice =
     typeof price === "string"
       ? parseFloat(price.replace(/[^0-9.-]+/g, ""))
       : price;
 
-  // Kiểm tra nếu giá trị không phải là số hợp lệ sau khi chuyển đổi
+  // Check if the numericPrice is valid
   if (isNaN(numericPrice)) {
     throw new Error("Invalid price format");
   }
 
-  // Sử dụng Intl.NumberFormat để định dạng giá trị tiền tệ
+  // Use Intl.NumberFormat to format the currency value
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -44,6 +53,20 @@ function ProductAddNewForm() {
   const [imageError, setImageError] = useState(false);
 
   const titleRef = useRef<HTMLInputElement | null>(null);
+
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  useEffect(() => {
+    // Kiểm tra xem tất cả các trường nhập liệu có đều không trống không
+    setIsFormValid(
+      title.trim() !== "" &&
+        subtitle.trim() !== "" &&
+        price.trim() !== "" &&
+        !isNaN(parseFloat(price.trim())) && // Kiểm tra xem giá có phải là số không
+        isbn13 !== "" &&
+        image !== ""
+    );
+  }, [title, subtitle, price, isbn13, image]);
 
   const handleSubmit = () => {
     const hasError =
@@ -111,9 +134,15 @@ function ProductAddNewForm() {
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setPrice(value);
+
+    if (value.trim() === "") {
+      setPriceError(true);
+      return;
+    }
+
     const priceAsString = value.replace("$", "");
     const priceAsNumber = parseFloat(priceAsString);
-    setPriceError(isNaN(priceAsNumber));
+    setPriceError(isNaN(priceAsNumber) || priceAsString.trim() === "");
   };
 
   const handleIsbn13Change = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -123,51 +152,71 @@ function ProductAddNewForm() {
   };
 
   return (
-    <div>
-      <input
-        ref={titleRef}
-        value={title}
-        placeholder="Enter title ..."
-        onChange={handleTitleChange}
-        style={{ borderColor: titleError ? "red" : "initial" }}
-      />
-      {titleError && <div style={{ color: "red" }}>Title is required</div>}
-      <br />
-      <input
-        value={subtitle}
-        placeholder="Enter subtitle ..."
-        onChange={handleSubtitleChange}
-        style={{ borderColor: subtitleError ? "red" : "initial" }}
-      />
-      {subtitleError && (
-        <div style={{ color: "red" }}>Subtitle is required</div>
-      )}
-      <br />
-      <input
-        value={price}
-        placeholder="Enter price $..."
-        onChange={handlePriceChange}
-        style={{ borderColor: priceError ? "red" : "initial" }}
-      />
-      {priceError && <div style={{ color: "red" }}>Price is invalid</div>}
-      <br />
-      <input
-        value={isbn13}
-        placeholder="Enter isbn13 ..."
-        onChange={handleIsbn13Change}
-        style={{ borderColor: isbn13Error ? "red" : "initial" }}
-      />
-      {isbn13Error && <div style={{ color: "red" }}>ISBN13 is invalid</div>}
-      <br />
-      <input
-        type={"file"}
-        placeholder="Select file..."
-        onChange={handleImageChange}
-        style={{ borderColor: imageError ? "red" : "initial" }}
-      />
-      {imageError && <div style={{ color: "red" }}>Image is required</div>}
-      <Button onClick={handleSubmit}>Add</Button>
-      <br />
+    <div className={cx("wrapper")}>
+      <Grid container sx={{ gapY: "24px" }}>
+        <Grid item xs={12} sm={10} md={6} lg={6}>
+          <input
+            ref={titleRef}
+            value={title}
+            placeholder="Enter title ..."
+            onChange={handleTitleChange}
+            style={{ borderColor: titleError ? "red" : "initial" }}
+          />
+          {titleError && <div style={{ color: "red" }}>Title is required</div>}
+          <br />
+          <input
+            value={subtitle}
+            placeholder="Enter subtitle ..."
+            onChange={handleSubtitleChange}
+            style={{ borderColor: subtitleError ? "red" : "initial" }}
+          />
+          {subtitleError && (
+            <div style={{ color: "red" }}>Subtitle is required</div>
+          )}
+          <br />
+          <input
+            value={price}
+            placeholder="Enter price $..."
+            onChange={handlePriceChange}
+            style={{ borderColor: priceError ? "red" : "initial" }}
+          />
+          {priceError && <div style={{ color: "red" }}>Price is invalid</div>}
+          <br />
+          <input
+            value={isbn13}
+            placeholder="Enter isbn13 ..."
+            onChange={handleIsbn13Change}
+            style={{ borderColor: isbn13Error ? "red" : "initial" }}
+          />
+          {isbn13Error && <div style={{ color: "red" }}>ISBN13 is invalid</div>}
+          <br />
+          <input
+            type={"file"}
+            placeholder="Select file..."
+            onChange={handleImageChange}
+            style={{ borderColor: imageError ? "red" : "initial" }}
+          />
+          {imageError && <div style={{ color: "red" }}>Image is required</div>}
+          <br />
+          <Button
+            onClick={handleSubmit}
+            disabled={!isFormValid}
+            sx={{
+              bgcolor: "#1a1a1a",
+              color: "#fff",
+              "&:hover": {
+                color: "#1a1a1a",
+              },
+              "&:disabled": {
+                opacity: 0.7,
+                color: "#fff",
+              },
+            }}
+          >
+            Add
+          </Button>
+        </Grid>
+      </Grid>
       <Grid container>
         {products.map((product: Product, index: number) => (
           <Grid item key={index} xs={12} sm={4} md={2} lg={2}>
