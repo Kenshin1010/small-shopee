@@ -75,7 +75,13 @@ function Purchase() {
         {Object.keys(localStorage).map((key) => {
           if (key.includes("purchased")) {
             return (
-              <Paper>
+              <Paper
+                sx={{
+                  padding: "5px 12px",
+                  margin: "12px",
+                  lineHeight: "2.2rem",
+                }}
+              >
                 <Link key={key} to={`/purchase?keyword=${key}`}>
                   {key}
                 </Link>
