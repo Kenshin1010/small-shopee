@@ -29,7 +29,23 @@ const reducer = (
         console.error("Action payload or product is missing", action);
         return state;
       }
-      const { isbn13, title, price, quantity, image } = action.payload.product;
+      const isbn13: number | undefined = action.payload?.product?.isbn13;
+      const title = action.payload?.product?.title;
+      const price = action.payload?.product?.price;
+      const image = action.payload?.product?.image;
+      const quantity = action.payload?.product?.quantity;
+
+      if (
+        isbn13 === undefined ||
+        title === undefined ||
+        price === undefined ||
+        image === undefined ||
+        quantity === undefined
+      ) {
+        console.error("Some parameters are undefined", action);
+        return state;
+      }
+
       const updatedCart = updateCart(
         state.cart,
         isbn13,
@@ -48,7 +64,7 @@ const reducer = (
         return state;
       }
       const { isbn13 } = action.payload.product;
-      const updatedCart = removeCartItem(state.cart, isbn13);
+      const updatedCart = removeCartItem(state.cart, isbn13 ?? 0);
       return { ...state, cart: updatedCart };
     }
     case REDUCER_ACTION_TYPE.QUANTITY: {
@@ -57,7 +73,11 @@ const reducer = (
         return state;
       }
       const { isbn13, quantity } = action.payload.product;
-      const updatedCart = updateCartItemQuantity(state.cart, isbn13, quantity);
+      const updatedCart = updateCartItemQuantity(
+        state.cart,
+        isbn13 ?? 0,
+        quantity
+      );
       return { ...state, cart: updatedCart };
     }
     case REDUCER_ACTION_TYPE.SUBMIT: {
@@ -77,6 +97,14 @@ const updateCart = (
   image: string,
   quantityDelta: number
 ) => {
+  if (
+    isbn13 === undefined ||
+    title === undefined ||
+    price === undefined ||
+    image === undefined
+  ) {
+    throw new Error("Some parameters are undefined");
+  }
   const itemExists = cart.find((item) => item.product.isbn13 === isbn13);
   const quantity = itemExists ? itemExists.product.quantity + quantityDelta : 1;
   const updatedItem: ProductItemCartType = {
@@ -92,6 +120,9 @@ const updateCart = (
 
 // Remove cart item
 const removeCartItem = (cart: ProductItemCartType[], isbn13: number) => {
+  if (isbn13 === undefined) {
+    throw new Error("ISBN13 is undefined");
+  }
   return cart.filter((item) => item.product.isbn13 !== isbn13);
 };
 
@@ -101,6 +132,9 @@ const updateCartItemQuantity = (
   isbn13: number,
   quantity: number
 ) => {
+  if (isbn13 === undefined || quantity === undefined) {
+    throw new Error("ISBN13 or quantity is undefined");
+  }
   if (quantity <= 0) {
     throw new Error("Quantity must be greater than 0");
   }
