@@ -5,6 +5,8 @@ import CartIcon from "../components/CartIcon/CartIcon";
 import Nav from "../components/Nav/Nav";
 import SearchBar from "../components/SearchBar/SearchBar";
 import routes from "../../config/routes";
+import Logo from "../components/Logo/Logo";
+import GoToTop from "../components/GoToTop/GoToTop";
 
 export type DefaultLayoutProps = {
   children: React.ReactElement;
@@ -21,11 +23,13 @@ function DefaultLayout({ children }: DefaultLayoutProps) {
       <Nav />
       <div className={cx("container")}>
         <div className={cx("search-cart")}>
+          <Logo />
           <SearchBar />
           {!isCartOrAddNew && <CartIcon />}
         </div>
         <div className={cx("content")}>{children}</div>
       </div>
+      <GoToTop />
     </div>
   );
 }

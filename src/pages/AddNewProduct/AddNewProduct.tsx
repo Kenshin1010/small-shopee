@@ -1,7 +1,7 @@
-import GetDataLocalStorage from "../../components/GetData/GetDataLocalStorage";
+import Logo from "../../layouts/components/Logo/Logo";
 
 function AddNewProduct() {
-  return <GetDataLocalStorage />;
+  return <Logo />;
 }
 
 export default AddNewProduct;

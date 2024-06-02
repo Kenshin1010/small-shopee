@@ -1,19 +1,10 @@
 .wrapper {
-  --search-border-radius: 92px;
-  --search-height: 46px;
-  --search-top-spacer: 9px;
-  --search-bottom-width: 52px;
-
-  height: var(--default-layout-header-height);
-  width: calc(var(--default-layout-width) + 0px);
   box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 1px;
   display: flex;
   align-items: center;
   justify-content: space-around;
-  position: fixed;
   top: 0;
   left: 0;
-  z-index: 1000;
 }
 
 .inner {
