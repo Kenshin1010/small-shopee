@@ -13,22 +13,20 @@ function ProductDetail() {
   console.log("dataDetail", data);
 
   return (
-    <>
-      <Grid container xs={12} sm={12} md={12} lg={12} xl={12} spacing={1}>
-        {data && (
-          <Grid item key={data.id} xs={12} sm={8} md={8} lg={8}>
-            <Paper>
-              <ProductItemDetail
-                data={data}
-                dispatch={dispatch}
-                REDUCER_ACTIONS={REDUCER_ACTIONS}
-                inCart={inCart}
-              />
-            </Paper>
-          </Grid>
-        )}
-      </Grid>
-    </>
+    <Grid container>
+      {data && (
+        <Grid item key={data.id} xs={12} sm={8} md={8} lg={8}>
+          <Paper>
+            <ProductItemDetail
+              data={data}
+              dispatch={dispatch}
+              REDUCER_ACTIONS={REDUCER_ACTIONS}
+              inCart={inCart}
+            />
+          </Paper>
+        </Grid>
+      )}
+    </Grid>
   );
 }
 

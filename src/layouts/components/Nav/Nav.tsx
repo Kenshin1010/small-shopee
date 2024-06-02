@@ -1,9 +1,16 @@
-import { Link } from "react-router-dom";
+import AddNewIcon from "../AddNewIcon/AddNewIcon";
+import PurchaseIcon from "../PurchaseIcon/PurchaseIcon";
+
+import classNames from "classnames/bind";
+import styles from "./Nav.module.scss";
+
+const cx = classNames.bind(styles);
 
 function Nav() {
   return (
-    <header>
-      <Link to={`/addnew`}>Add New Product</Link>
+    <header className={cx("wrapper")}>
+      <AddNewIcon />
+      <PurchaseIcon />
     </header>
   );
 }

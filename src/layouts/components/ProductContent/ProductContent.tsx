@@ -8,7 +8,7 @@ import { useData } from "../../../hooks/useData";
 export function ProductContent() {
   const { searchResult, dataResult } = useData();
   return (
-    <Grid container xs={12} sm={12} md={12} lg={12} xl={12} spacing={1}>
+    <Grid container>
       {[routes.home, routes.search].includes(window.location.pathname) &&
         (searchResult.length > 0
           ? searchResult.map((result: ProductDataType) => (

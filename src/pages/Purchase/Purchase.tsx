@@ -1,7 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
 import { ProductItemPurchasedType } from "../../components/ProductItemPurchased/ProductItemPurchased";
-import { Grid, Paper } from "@mui/material";
+import { Box, Grid, Paper, Typography } from "@mui/material";
 import ProductItemPurchased from "../../components/ProductItemPurchased/ProductItemPurchased";
+import { formatPrice } from "../../components/ProductAddNewForm/ProductAddNewForm";
 
 function Purchase() {
   const location = useLocation();
@@ -17,6 +18,15 @@ function Purchase() {
       : [];
     console.log("Products Purchased `${orderKey}` :", products);
 
+    // Tính tổng số lượng và tổng giá trị của đơn hàng
+    let totalItems = 0;
+    let totalPrice = 0;
+    products.forEach((item) => {
+      totalItems += item.product.quantity;
+      totalPrice +=
+        item.product.quantity * parseFloat(item.product.price.replace("$", ""));
+    });
+
     if (products.length > 0) {
       console.log(
         "Products[0].product.quantity :",
@@ -27,6 +37,16 @@ function Purchase() {
           <h2>Thank you for your order.</h2>
           <h3>Order Key: {keyword}</h3>
           <Grid container spacing={2}>
+            <Grid item xs={12} sm={12} md={12} lg={12}>
+              <Paper>
+                <Box sx={{ textAlign: "center" }}>
+                  <Typography>Total Items: {totalItems}</Typography>
+                  <Typography>
+                    Total Price: {formatPrice(totalPrice)}
+                  </Typography>
+                </Box>
+              </Paper>
+            </Grid>
             {products.map((item) => (
               <Grid
                 item
