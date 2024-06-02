@@ -2,7 +2,7 @@ import classNames from "classnames/bind";
 import styles from "./ProductItemCart.module.scss";
 
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Button, Input, Stack } from "@mui/material";
+import { Button, Input, Stack, Tooltip } from "@mui/material";
 import { ReactElement, useState } from "react";
 import { ReducerAction, ReducerActionType } from "../../context/CartProvider";
 import ProductImage from "../Image/ProductImage";
@@ -135,13 +135,15 @@ function ProductItemCart(props: ProductItemCartType): ReactElement {
             currency: "USD",
           }).format(lineTotal)}
         </span>
-        <Button>
-          <DeleteIcon
-            className={cx("delete-icon")}
-            onClick={onRemoveFromCart}
-            sx={{ fontSize: "24px" }}
-          />
-        </Button>
+        <Tooltip title="Delete" arrow disableFocusListener>
+          <Button>
+            <DeleteIcon
+              className={cx("delete-icon")}
+              onClick={onRemoveFromCart}
+              sx={{ fontSize: "24px" }}
+            />
+          </Button>
+        </Tooltip>
       </Stack>
     </Stack>
   );

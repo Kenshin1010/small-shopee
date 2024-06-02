@@ -6,7 +6,7 @@ function AddNewIcon() {
   const navigate = useNavigate();
   return (
     <div>
-      <Tooltip arrow title="Add New Product">
+      <Tooltip disableFocusListener arrow title="Add New Product">
         <IconButton
           onClick={() => {
             navigate(`/addnew`);

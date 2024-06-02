@@ -11,7 +11,7 @@ const cx = classNames.bind(styles);
 
 function Logo() {
   return (
-    <Tooltip arrow title="Home Page">
+    <Tooltip disableFocusListener arrow title="Home Page">
       <div className={cx("wrapper")}>
         <div className={cx("inner")}>
           <Link to={config.routes.home} className={cx("logo-link")}>

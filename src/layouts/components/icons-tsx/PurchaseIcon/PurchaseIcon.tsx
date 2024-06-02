@@ -6,7 +6,7 @@ function PurchaseIcon() {
   const navigate = useNavigate();
   return (
     <div>
-      <Tooltip arrow title="Purchased History">
+      <Tooltip disableFocusListener arrow title="Purchased History">
         <IconButton
           onClick={() => {
             navigate(`/purchase`);

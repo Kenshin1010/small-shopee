@@ -19,7 +19,7 @@ function CartIcon() {
   const navigate = useNavigate();
   const { totalUniqueItems } = useCart();
   return (
-    <Tooltip arrow title="Cart">
+    <Tooltip disableFocusListener arrow title="Cart">
       <IconButton
         aria-label="cart"
         onClick={() => {

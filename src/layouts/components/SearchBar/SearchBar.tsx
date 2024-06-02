@@ -9,7 +9,7 @@ import SearchIcon from "../icons-tsx/SearchIcon";
 
 import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
 import RotateLeftOutlinedIcon from "@mui/icons-material/RotateLeftOutlined";
-import { Button, Container, Grid } from "@mui/material";
+import { Button, Container, Grid, Tooltip } from "@mui/material";
 import { ProductDataType } from "../../../components/ProductItem/ProductItem";
 import { Book, getNewBooks, searchBooks } from "../../../services";
 
@@ -215,9 +215,11 @@ function SearchBar() {
               </button>
             )}
             {loading && <RotateLeftOutlinedIcon />}
-            <Button className={cx("search-btn")} onMouseDown={handleSubmit}>
-              <SearchIcon />
-            </Button>
+            <Tooltip arrow disableFocusListener title={"Search"}>
+              <Button className={cx("search-btn")} onMouseDown={handleSubmit}>
+                <SearchIcon />
+              </Button>
+            </Tooltip>
           </Grid>
         </HeadlessTippy>
       </Grid>
