@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import classNames from "classnames/bind";
 import styles from "./Logo.module.scss";
 
-import config from "../../../config";
-import images from "../../../assets/images";
+import config from "../../../../config";
+import images from "../../../../assets/images";
 import { Tooltip } from "@mui/material";
 
 const cx = classNames.bind(styles);

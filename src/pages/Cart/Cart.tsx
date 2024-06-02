@@ -37,9 +37,30 @@ function Cart() {
       <Grid item xs={12} sm={12} md={12} lg={12}>
         <Paper>
           <Box sx={{ textAlign: "center" }}>
-            <Typography>Total Items: {totalItems}</Typography>
-            <Typography>Total Price: {totalPrice}</Typography>
-            <Button onClick={onSubmitOrder} disabled={!totalItems}>
+            <Typography sx={{ fontSize: "18px" }}>
+              Total Items: {totalItems}
+            </Typography>
+            <Typography sx={{ fontSize: "18px" }}>
+              Total Price: {totalPrice}
+            </Typography>
+            <Button
+              onClick={onSubmitOrder}
+              disabled={!totalItems}
+              sx={{
+                fontSize: "16px",
+                bgcolor: "#1a1a1a",
+                color: "#fff",
+                "&:hover": {
+                  bgcolor: "rgba(22, 24, 35, 0.06)",
+                  color: "#1a1a1a",
+                },
+                "&:disabled": {
+                  opacity: 0.7,
+                  color: "#fff",
+                },
+                lineHeight: "2.2rem",
+              }}
+            >
               Place Order
             </Button>
           </Box>

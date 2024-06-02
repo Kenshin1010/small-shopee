@@ -13,7 +13,7 @@ function PurchaseIcon() {
           }}
           sx={{ marginRight: "48px", cursor: "pointer" }}
         >
-          <ReceiptIcon />
+          <ReceiptIcon sx={{ fontSize: "32px" }} />
         </IconButton>
       </Tooltip>
     </div>

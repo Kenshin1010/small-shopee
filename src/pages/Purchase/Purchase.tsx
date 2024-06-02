@@ -33,15 +33,17 @@ function Purchase() {
         products[0].product.quantity
       );
       return (
-        <>
+        <Box>
           <h2>Thank you for your order.</h2>
-          <h3>Order Key: {keyword}</h3>
+          <h4>Order Key: {keyword}</h4>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={12} lg={12}>
               <Paper>
                 <Box sx={{ textAlign: "center" }}>
-                  <Typography>Total Items: {totalItems}</Typography>
-                  <Typography>
+                  <Typography sx={{ fontSize: "18px" }}>
+                    Total Items: {totalItems}
+                  </Typography>
+                  <Typography sx={{ fontSize: "18px" }}>
                     Total Price: {formatPrice(totalPrice)}
                   </Typography>
                 </Box>
@@ -62,7 +64,7 @@ function Purchase() {
               </Grid>
             ))}
           </Grid>
-        </>
+        </Box>
       );
     } else {
       return <div>No order found for {keyword}</div>;
@@ -73,9 +75,11 @@ function Purchase() {
         {Object.keys(localStorage).map((key) => {
           if (key.includes("purchased")) {
             return (
-              <Link key={key} to={`/purchase?keyword=${key}`}>
-                {key}
-              </Link>
+              <Paper>
+                <Link key={key} to={`/purchase?keyword=${key}`}>
+                  {key}
+                </Link>
+              </Paper>
             );
           }
           return null;

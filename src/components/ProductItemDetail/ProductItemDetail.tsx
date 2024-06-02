@@ -68,7 +68,11 @@ function ProductItemDetail(props: ProductItemDetailType): ReactElement {
         </div>
         <span className={cx("subtitle")}>{data.subtitle}</span>
         <span className={cx("price")}>{data.price}</span>
-        <Button onClick={handleAddToCart} disabled={inCart}>
+        <Button
+          onClick={handleAddToCart}
+          disabled={inCart}
+          sx={{ fontSize: "16px" }}
+        >
           {inCart ? "In Cart" : "Add To Cart"}
         </Button>
       </Box>

@@ -59,6 +59,7 @@ function ProductItemPurchased(props: ProductItemPurchasedType): ReactElement {
             style={{
               width: "50px",
               textAlign: "center",
+              fontSize: "16px",
               outline: "1px solid rgba(22, 24, 35, 0.75)",
             }}
           >

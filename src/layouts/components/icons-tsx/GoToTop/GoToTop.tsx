@@ -34,6 +34,7 @@ function GoToTop() {
             position: "fixed",
             right: "20px",
             bottom: "20px",
+            fontSize: "16px",
           }}
           onClick={() => window.scrollTo(0, 0)}
         >

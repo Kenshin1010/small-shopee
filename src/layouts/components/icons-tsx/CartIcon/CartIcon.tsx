@@ -4,7 +4,7 @@ import Badge, { BadgeProps } from "@mui/material/Badge";
 import IconButton from "@mui/material/IconButton";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-import useCart from "../../../hooks/useCart";
+import useCart from "../../../../hooks/useCart";
 
 const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -28,7 +28,7 @@ function CartIcon() {
         sx={{ marginRight: "48px" }}
       >
         <StyledBadge badgeContent={totalUniqueItems} color="secondary">
-          <ShoppingCartIcon />
+          <ShoppingCartIcon sx={{ fontSize: "32px" }} />
         </StyledBadge>
       </IconButton>
     </Tooltip>

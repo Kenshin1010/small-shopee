@@ -103,7 +103,10 @@ function ProductItemCart(props: ProductItemCartType): ReactElement {
           alignItems={"center"}
           className={cx("quantity")}
         >
-          <Button onClick={decrementQuantity} sx={{ minWidth: "42px" }}>
+          <Button
+            onClick={decrementQuantity}
+            sx={{ minWidth: "42px", fontSize: "16px" }}
+          >
             -
           </Button>
           <Input
@@ -111,6 +114,7 @@ function ProductItemCart(props: ProductItemCartType): ReactElement {
             onChange={handleChange}
             sx={{
               width: "50px",
+              fontSize: "16px",
               textAlign: "center",
               "& input": { textAlign: "center" },
               "&:focus-within": { borderBottom: "none" },
@@ -118,7 +122,10 @@ function ProductItemCart(props: ProductItemCartType): ReactElement {
             }}
             disableUnderline
           />
-          <Button onClick={incrementQuantity} sx={{ minWidth: "42px" }}>
+          <Button
+            onClick={incrementQuantity}
+            sx={{ minWidth: "42px", fontSize: "16px" }}
+          >
             +
           </Button>
         </Stack>
@@ -132,6 +139,7 @@ function ProductItemCart(props: ProductItemCartType): ReactElement {
           <DeleteIcon
             className={cx("delete-icon")}
             onClick={onRemoveFromCart}
+            sx={{ fontSize: "24px" }}
           />
         </Button>
       </Stack>

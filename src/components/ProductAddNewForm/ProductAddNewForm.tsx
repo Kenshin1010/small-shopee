@@ -156,6 +156,7 @@ function ProductAddNewForm() {
       <Grid container sx={{ gapY: "24px" }}>
         <Grid item xs={12} sm={10} md={6} lg={6}>
           <input
+            className={cx("input-form")}
             ref={titleRef}
             value={title}
             placeholder="Enter title ..."
@@ -165,6 +166,7 @@ function ProductAddNewForm() {
           {titleError && <div style={{ color: "red" }}>Title is required</div>}
           <br />
           <input
+            className={cx("input-form")}
             value={subtitle}
             placeholder="Enter subtitle ..."
             onChange={handleSubtitleChange}
@@ -175,6 +177,7 @@ function ProductAddNewForm() {
           )}
           <br />
           <input
+            className={cx("input-form")}
             value={price}
             placeholder="Enter price $..."
             onChange={handlePriceChange}
@@ -183,6 +186,7 @@ function ProductAddNewForm() {
           {priceError && <div style={{ color: "red" }}>Price is invalid</div>}
           <br />
           <input
+            className={cx("input-form")}
             value={isbn13}
             placeholder="Enter isbn13 ..."
             onChange={handleIsbn13Change}
@@ -191,6 +195,7 @@ function ProductAddNewForm() {
           {isbn13Error && <div style={{ color: "red" }}>ISBN13 is invalid</div>}
           <br />
           <input
+            className={cx("input-file")}
             type={"file"}
             placeholder="Select file..."
             onChange={handleImageChange}
@@ -202,15 +207,20 @@ function ProductAddNewForm() {
             onClick={handleSubmit}
             disabled={!isFormValid}
             sx={{
+              width: "100%",
+              fontSize: "16px",
               bgcolor: "#1a1a1a",
               color: "#fff",
               "&:hover": {
+                bgcolor: "rgba(22, 24, 35, 0.06)",
                 color: "#1a1a1a",
               },
               "&:disabled": {
                 opacity: 0.7,
                 color: "#fff",
               },
+              lineHeight: "2.2rem",
+              margin: "12px",
             }}
           >
             Add

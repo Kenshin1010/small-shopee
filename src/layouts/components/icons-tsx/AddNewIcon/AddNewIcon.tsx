@@ -13,7 +13,7 @@ function AddNewIcon() {
           }}
           sx={{ margin: "0 48px" }}
         >
-          <PostAddIcon />
+          <PostAddIcon sx={{ fontSize: "32px" }} />
         </IconButton>
       </Tooltip>
     </div>

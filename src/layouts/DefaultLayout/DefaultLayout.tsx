@@ -2,8 +2,8 @@ import classNames from "classnames/bind";
 import styles from "./DefaultLayout.module.scss";
 
 import routes from "../../config/routes";
-import CartIcon from "../components/CartIcon/CartIcon";
-import GoToTop from "../components/GoToTop/GoToTop";
+import CartIcon from "../components/icons-tsx/CartIcon/CartIcon";
+import GoToTop from "../components/icons-tsx/GoToTop/GoToTop";
 import Nav from "../components/Nav/Nav";
 import SearchBar from "../components/SearchBar/SearchBar";
 
