@@ -1,12 +1,14 @@
 import { Button, Grid, Paper } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
-import ProductItem from "../ProductItem/ProductItem";
 import classNames from "classnames/bind";
+import { useEffect, useRef, useState } from "react";
+import ProductItemAddNew from "../ProductItemAddNew/ProductItemAddNew";
 import styles from "./ProductAddNewForm.module.scss";
+import { useId } from "../../hooks/useId";
 
 const cx = classNames.bind(styles);
 
 type Product = {
+  id?: string | number | undefined;
   title: string;
   subtitle: string;
   price: string;
@@ -53,11 +55,11 @@ function ProductAddNewForm() {
   const [imageError, setImageError] = useState(false);
 
   const titleRef = useRef<HTMLInputElement | null>(null);
-
+  const inputFileRef = useRef<HTMLInputElement | null>(null);
   const [isFormValid, setIsFormValid] = useState(false);
 
   useEffect(() => {
-    const priceAsString = price.replace("$", "");
+    const priceAsString = price.replace(/[^0-9.-]+/g, "");
     const parsedIsbn13 = parseInt(isbn13.trim(), 10);
     // Kiểm tra xem tất cả các trường nhập liệu có đều không trống không
     setIsFormValid(
@@ -71,7 +73,11 @@ function ProductAddNewForm() {
     );
   }, [title, subtitle, price, isbn13, image]);
 
+  const autoId = useId();
+  console.log("autoId: ", autoId);
+
   const handleSubmit = () => {
+    const productId = autoId;
     const parsedIsbn13 = parseInt(isbn13, 10);
     const hasError =
       titleError ||
@@ -81,6 +87,7 @@ function ProductAddNewForm() {
       imageError;
     if (!hasError) {
       const newProduct = {
+        id: productId,
         title,
         subtitle,
         price,
@@ -99,6 +106,11 @@ function ProductAddNewForm() {
       setPrice("");
       setIsbn13("");
       setImage("");
+
+      // Đặt giá trị của input file về rỗng
+      if (inputFileRef.current) {
+        inputFileRef.current.value = "";
+      }
 
       titleRef.current?.focus();
     } else {
@@ -124,6 +136,9 @@ function ProductAddNewForm() {
         }
       };
       reader.readAsDataURL(e.target.files[0]);
+    } else {
+      // Nếu người dùng không chọn tệp tin mới, đặt Image về trống
+      setImage("");
     }
   };
 
@@ -148,7 +163,7 @@ function ProductAddNewForm() {
       return;
     }
 
-    const priceAsString = value.replace("$", "");
+    const priceAsString = value.replace(/[^0-9.-]+/g, "");
     const priceAsNumber = parseFloat(priceAsString);
     setPriceError(isNaN(priceAsNumber) || priceAsString.trim() === "");
   };
@@ -161,9 +176,17 @@ function ProductAddNewForm() {
     setIsbn13Error(isNaN(parsedValue) || value.trim() === "");
   };
 
+  const handleRemoveProductNew = (productId: string | number | undefined) => {
+    const updatedProducts = products.filter(
+      (product) => product.id !== productId
+    );
+    setProducts(updatedProducts);
+    localStorage.setItem("newProducts", JSON.stringify(updatedProducts));
+  };
+
   return (
     <div className={cx("wrapper")}>
-      <Grid container sx={{ gapY: "24px" }}>
+      <Grid container sx={{ gap: "24px" }}>
         <Grid item xs={12} sm={10} md={6} lg={6}>
           <input
             className={cx("input-form")}
@@ -206,6 +229,7 @@ function ProductAddNewForm() {
           <br />
           <input
             className={cx("input-file")}
+            ref={inputFileRef}
             type={"file"}
             placeholder="Select file..."
             onChange={handleImageChange}
@@ -237,16 +261,13 @@ function ProductAddNewForm() {
           </Button>
         </Grid>
       </Grid>
-      <Grid container>
+      <Grid container sx={{ gap: "12px", margin: "12px" }}>
         {products.map((product: Product, index: number) => (
           <Grid item key={index} xs={12} sm={4} md={2} lg={2}>
             <Paper>
-              <ProductItem
-                title={product.title}
-                subtitle={product.subtitle}
-                price={formatPrice(product.price)}
-                isbn13={product.isbn13}
-                image={product.image}
+              <ProductItemAddNew
+                product={product}
+                onDelete={handleRemoveProductNew}
               />
             </Paper>
           </Grid>

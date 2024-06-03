@@ -8,7 +8,7 @@ import ProductImage from "../Image/ProductImage";
 const cx = classNames.bind(styles);
 
 export type ProductDataType = {
-  id?: number;
+  id?: string | number | undefined;
   title: string;
   subtitle?: string;
   isbn13?: number;
