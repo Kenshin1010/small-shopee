@@ -90,7 +90,7 @@ function ProductAddNewForm() {
         id: productId,
         title,
         subtitle,
-        price,
+        price: formatPrice(price),
         isbn13: parsedIsbn13,
         image,
       };
