@@ -76,6 +76,15 @@ function ProductAddNewForm() {
   const autoId = useId();
   console.log("autoId: ", autoId);
 
+  const isISBN13Exists = (isbn13: number) => {
+    const existingProducts = localStorage.getItem("newProducts");
+    if (existingProducts) {
+      const parsedProducts: Product[] = JSON.parse(existingProducts);
+      return parsedProducts.some((product) => product.isbn13 === isbn13);
+    }
+    return false;
+  };
+
   const handleSubmit = () => {
     const productId = autoId;
     const parsedIsbn13 = parseInt(isbn13, 10);
@@ -85,7 +94,13 @@ function ProductAddNewForm() {
       priceError ||
       isNaN(parsedIsbn13) ||
       imageError;
+
     if (!hasError) {
+      if (isISBN13Exists(parsedIsbn13)) {
+        alert("ISBN13 already exists!");
+        return;
+      }
+
       const newProduct = {
         id: productId,
         title,
