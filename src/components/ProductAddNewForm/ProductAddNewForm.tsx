@@ -42,7 +42,7 @@ function ProductAddNewForm() {
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [price, setPrice] = useState("");
-  const [isbn13, setIsbn13] = useState<number | "">("");
+  const [isbn13, setIsbn13] = useState<string | "">("");
   const [image, setImage] = useState("");
   const [products, setProducts] = useState<Product[]>([]);
 
@@ -57,26 +57,34 @@ function ProductAddNewForm() {
   const [isFormValid, setIsFormValid] = useState(false);
 
   useEffect(() => {
+    const priceAsString = price.replace("$", "");
+    const parsedIsbn13 = parseInt(isbn13.trim(), 10);
     // Kiểm tra xem tất cả các trường nhập liệu có đều không trống không
     setIsFormValid(
       title.trim() !== "" &&
         subtitle.trim() !== "" &&
-        price.trim() !== "" &&
-        !isNaN(parseFloat(price.trim())) && // Kiểm tra xem giá có phải là số không
-        isbn13 !== "" &&
+        priceAsString.trim() !== "" &&
+        !isNaN(parseFloat(priceAsString.trim())) && // Kiểm tra xem giá có phải là số không
+        isbn13.trim() !== "" &&
+        !isNaN(parsedIsbn13) &&
         image !== ""
     );
   }, [title, subtitle, price, isbn13, image]);
 
   const handleSubmit = () => {
+    const parsedIsbn13 = parseInt(isbn13, 10);
     const hasError =
-      titleError || subtitleError || priceError || isbn13Error || imageError;
+      titleError ||
+      subtitleError ||
+      priceError ||
+      isNaN(parsedIsbn13) ||
+      imageError;
     if (!hasError) {
       const newProduct = {
         title,
         subtitle,
         price,
-        isbn13: isbn13 as number, // Đảm bảo isbn13 là số
+        isbn13: parsedIsbn13,
         image,
       };
       // Thêm sản phẩm mới vào danh sách sản phẩm
@@ -146,9 +154,11 @@ function ProductAddNewForm() {
   };
 
   const handleIsbn13Change = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value);
+    const value = e.target.value;
     setIsbn13(value);
-    setIsbn13Error(isNaN(value));
+
+    const parsedValue = parseInt(value, 10);
+    setIsbn13Error(isNaN(parsedValue) || value.trim() === "");
   };
 
   return (
