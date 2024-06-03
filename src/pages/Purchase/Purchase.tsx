@@ -3,6 +3,10 @@ import { ProductItemPurchasedType } from "../../components/ProductItemPurchased/
 import { Box, Grid, Paper, Typography } from "@mui/material";
 import ProductItemPurchased from "../../components/ProductItemPurchased/ProductItemPurchased";
 import { formatPrice } from "../../components/ProductAddNewForm/ProductAddNewForm";
+import classNames from "classnames/bind";
+import styles from "./Purchase.module.scss";
+
+const cx = classNames.bind(styles);
 
 function Purchase() {
   const location = useLocation();
@@ -115,8 +119,13 @@ function Purchase() {
               lineHeight: "2.2rem",
             }}
           >
-            <Box>{record.time}</Box>
-            <Link to={`/purchase?keyword=${record.key}`}>{record.key}</Link>
+            <Box sx={{ fontSize: "16px" }}>{record.time}</Box>
+            <Link
+              className={cx("link-purchased")}
+              to={`/purchase?keyword=${record.key}`}
+            >
+              {record.key}
+            </Link>
           </Paper>
         ))}
       </>
