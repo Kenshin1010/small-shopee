@@ -1,7 +1,9 @@
 export const color = {
-  primary: "#ee4d2d",
-  darkPrimary: "#ee4d4d",
-  secondary: "#d41830",
+  // primary: "#ee4d2d",
+  // darkPrimary: "#ee4d4d",
+  // secondary: "#d41830",
+  primary: "#1a1a1a",
+  secondary: "#101010",
   textPrimary: "#212121",
   textSecondary: "#101010",
   white: "#FFFFFF",
