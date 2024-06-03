@@ -12,11 +12,20 @@ function Cart() {
   const onSubmitOrder = () => {
     dispatch({ type: REDUCER_ACTIONS.SUBMIT });
     setConfirm(true);
+    const currentDate = new Date();
+    const orderTime = currentDate;
+    console.log("orderTime: ", orderTime);
+
     const currentTime = Date.now();
     const orderName = `${currentTime}_purchased`;
-    localStorage.setItem(orderName, JSON.stringify(cart));
+    const orderData = {
+      cart,
+      orderTime,
+    };
 
-    navigate(`/purchase?keyword=${encodeURIComponent(orderName)}`, {});
+    localStorage.setItem(orderName, JSON.stringify(orderData));
+
+    navigate(`/purchase?keyword=${encodeURIComponent(orderName)}`);
   };
 
   const pageContent = confirm ? (

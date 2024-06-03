@@ -20,7 +20,7 @@ export type ProductItemPurchasedType = {
 
 function ProductItemPurchased(props: ProductItemPurchasedType): ReactElement {
   const { product } = props;
-  const priceAsString = product.price.replace("$", "");
+  const priceAsString = product.price.replace(/[^0-9.-]+/g, "");
   const priceAsNumber = parseFloat(priceAsString);
   const lineTotal: number = product.quantity * priceAsNumber;
 

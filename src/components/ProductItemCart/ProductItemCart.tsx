@@ -24,7 +24,7 @@ export type ProductItemCartType = {
 
 function ProductItemCart(props: ProductItemCartType): ReactElement {
   const { product, dispatch, REDUCER_ACTIONS } = props;
-  const priceAsString = product.price.replace("$", "");
+  const priceAsString = product.price.replace(/[^0-9.-]+/g, "");
   const priceAsNumber = parseFloat(priceAsString);
   const lineTotal: number = product.quantity * priceAsNumber;
 

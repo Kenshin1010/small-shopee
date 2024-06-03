@@ -167,7 +167,10 @@ const useCartContext = (initCartState: CartStateType) => {
     currency: "USD",
   }).format(
     state.cart.reduce((previousValue, cartItem) => {
-      const priceCartItemAsString = cartItem.product.price.replace("$", "");
+      const priceCartItemAsString = cartItem.product.price.replace(
+        /[^0-9.-]+/g,
+        ""
+      );
       const priceCartItemAsNumber = parseFloat(priceCartItemAsString);
       return previousValue + cartItem.product.quantity * priceCartItemAsNumber;
     }, 0)

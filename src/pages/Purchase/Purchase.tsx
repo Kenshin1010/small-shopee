@@ -13,9 +13,15 @@ function Purchase() {
   if (keyword) {
     const orderKey = `${keyword}`;
     const orderFromLocalStorage = localStorage.getItem(orderKey);
-    const products: ProductItemPurchasedType[] = orderFromLocalStorage
+    const orderData = orderFromLocalStorage
       ? JSON.parse(orderFromLocalStorage)
+      : null;
+    const products: ProductItemPurchasedType[] = orderData
+      ? orderData.cart
       : [];
+    const orderTime = orderData ? orderData.orderTime : null;
+    console.log("orderTimePurchased: ", orderTime);
+
     console.log("Products Purchased `${orderKey}` :", products);
 
     // Tính tổng số lượng và tổng giá trị của đơn hàng
@@ -24,7 +30,8 @@ function Purchase() {
     products.forEach((item) => {
       totalItems += item.product.quantity;
       totalPrice +=
-        item.product.quantity * parseFloat(item.product.price.replace("$", ""));
+        item.product.quantity *
+        parseFloat(item.product.price.replace(/[^0-9.-]+/g, ""));
     });
 
     if (products.length > 0) {
@@ -34,8 +41,17 @@ function Purchase() {
       );
       return (
         <Box>
-          <h2>Thank you for your order.</h2>
-          <h4>Order Key: {keyword}</h4>
+          <Paper sx={{ marginBottom: "12px" }}>
+            <Typography variant="h1" fontSize={"20px"}>
+              Thank you for your order.
+            </Typography>
+            <Typography variant="h2" fontSize={"16px"}>
+              Time: {orderTime}
+            </Typography>
+            <Typography variant="h2" fontSize={"16px"}>
+              Order Key: {keyword}
+            </Typography>
+          </Paper>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={12} lg={12}>
               <Paper>
@@ -70,26 +86,39 @@ function Purchase() {
       return <div>No order found for {keyword}</div>;
     }
   } else {
+    interface TimeRecord {
+      key: string;
+      time: string; // Sửa kiểu dữ liệu của time thành string
+    }
+
+    const keysWithTime: TimeRecord[] = Object.keys(localStorage)
+      .filter((key) => key.includes("purchased"))
+      .map((key) => {
+        const orderData = JSON.parse(localStorage.getItem(key) || "{}");
+        return {
+          key,
+          time: orderData.orderTime
+            ? new Date(orderData.orderTime).toLocaleString()
+            : "N/A",
+        };
+      })
+      .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
+
     return (
       <>
-        {Object.keys(localStorage).map((key) => {
-          if (key.includes("purchased")) {
-            return (
-              <Paper
-                sx={{
-                  padding: "5px 12px",
-                  margin: "12px",
-                  lineHeight: "2.2rem",
-                }}
-              >
-                <Link key={key} to={`/purchase?keyword=${key}`}>
-                  {key}
-                </Link>
-              </Paper>
-            );
-          }
-          return null;
-        })}
+        {keysWithTime.map((record) => (
+          <Paper
+            key={record.key}
+            sx={{
+              padding: "5px 12px",
+              margin: "12px",
+              lineHeight: "2.2rem",
+            }}
+          >
+            <Box>{record.time}</Box>
+            <Link to={`/purchase?keyword=${record.key}`}>{record.key}</Link>
+          </Paper>
+        ))}
       </>
     );
   }
