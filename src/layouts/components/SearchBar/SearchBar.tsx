@@ -239,12 +239,12 @@ function SearchBar() {
                   "&.MuiButtonBase-root.MuiButton-root": {
                     color: "rgba(22, 24, 35, 0.34)",
                     bgcolor: "rgba(22, 24, 35, 0.03)",
-                    borderRadius: "none",
+                    borderRadius: "0",
                   },
                   "&.MuiButtonBase-root.MuiButton-root:hover": {
                     color: "#212121",
                     bgcolor: "rgba(22, 24, 35, 0.12)",
-                    borderRadius: "none",
+                    borderRadius: "0",
                   },
                 }}
               >

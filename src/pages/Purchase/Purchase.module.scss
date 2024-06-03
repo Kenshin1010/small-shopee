@@ -1,3 +1,12 @@
 .link-purchased {
   font-size: 16px;
 }
+
+.remove {
+  color: var(--icon-color);
+
+  &:hover {
+    cursor: pointer;
+    color: var(--text-color);
+  }
+}

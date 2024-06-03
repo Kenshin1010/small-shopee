@@ -1,34 +1,74 @@
-import { Link, useLocation } from "react-router-dom";
-import { ProductItemPurchasedType } from "../../components/ProductItemPurchased/ProductItemPurchased";
-import { Box, Grid, Paper, Typography } from "@mui/material";
-import ProductItemPurchased from "../../components/ProductItemPurchased/ProductItemPurchased";
-import { formatPrice } from "../../components/ProductAddNewForm/ProductAddNewForm";
+import { Box, Button, Card, Grid, Paper, Typography } from "@mui/material";
 import classNames from "classnames/bind";
 import styles from "./Purchase.module.scss";
+import { Link, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { formatPrice } from "../../components/ProductAddNewForm/ProductAddNewForm";
+import ProductItemPurchased, {
+  ProductItemPurchasedType,
+} from "../../components/ProductItemPurchased/ProductItemPurchased";
+import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
 
 const cx = classNames.bind(styles);
+
+interface OrderData {
+  cart: ProductItemPurchasedType[];
+  orderTime: string;
+}
+
+interface TimeRecord {
+  key: string;
+  time: string;
+}
 
 function Purchase() {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const keyword = searchParams.get("keyword");
-  console.log("keyword :", keyword);
+  const [orders, setOrders] = useState<TimeRecord[]>([]);
+
+  useEffect(() => {
+    const fetchOrders = () => {
+      const keysWithTime: TimeRecord[] = Object.keys(localStorage)
+        .filter((key) => key.includes("purchased"))
+        .map((key) => {
+          const orderData: OrderData = JSON.parse(
+            localStorage.getItem(key) || "{}"
+          );
+          return {
+            key,
+            time: orderData.orderTime
+              ? new Date(orderData.orderTime).toLocaleString()
+              : "N/A",
+          };
+        })
+        .sort(
+          (a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()
+        );
+
+      setOrders(keysWithTime);
+    };
+
+    fetchOrders();
+  }, []);
+
+  const handleRemovePurchased = (key: string) => {
+    localStorage.removeItem(key);
+    setOrders((prevOrders) => prevOrders.filter((order) => order.key !== key));
+  };
 
   if (keyword) {
     const orderKey = `${keyword}`;
     const orderFromLocalStorage = localStorage.getItem(orderKey);
-    const orderData = orderFromLocalStorage
+    const orderData: OrderData | null = orderFromLocalStorage
       ? JSON.parse(orderFromLocalStorage)
       : null;
     const products: ProductItemPurchasedType[] = orderData
       ? orderData.cart
       : [];
     const orderTime = orderData ? orderData.orderTime : null;
-    console.log("orderTimePurchased: ", orderTime);
 
-    console.log("Products Purchased `${orderKey}` :", products);
-
-    // Tính tổng số lượng và tổng giá trị của đơn hàng
+    // Calculate total items and total price of the order
     let totalItems = 0;
     let totalPrice = 0;
     products.forEach((item) => {
@@ -39,10 +79,6 @@ function Purchase() {
     });
 
     if (products.length > 0) {
-      console.log(
-        "Products[0].product.quantity :",
-        products[0].product.quantity
-      );
       return (
         <Box>
           <Paper sx={{ marginBottom: "12px" }}>
@@ -57,7 +93,7 @@ function Purchase() {
             </Typography>
           </Paper>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} lg={12}>
+            <Grid item xs={12}>
               <Paper>
                 <Box sx={{ textAlign: "center" }}>
                   <Typography sx={{ fontSize: "18px" }}>
@@ -70,14 +106,7 @@ function Purchase() {
               </Paper>
             </Grid>
             {products.map((item) => (
-              <Grid
-                item
-                key={item.product.isbn13}
-                xs={12}
-                sm={12}
-                md={12}
-                lg={12}
-              >
+              <Grid item key={item.product.isbn13} xs={12}>
                 <Paper>
                   <ProductItemPurchased product={item.product} />
                 </Paper>
@@ -90,28 +119,10 @@ function Purchase() {
       return <div>No order found for {keyword}</div>;
     }
   } else {
-    interface TimeRecord {
-      key: string;
-      time: string; // Sửa kiểu dữ liệu của time thành string
-    }
-
-    const keysWithTime: TimeRecord[] = Object.keys(localStorage)
-      .filter((key) => key.includes("purchased"))
-      .map((key) => {
-        const orderData = JSON.parse(localStorage.getItem(key) || "{}");
-        return {
-          key,
-          time: orderData.orderTime
-            ? new Date(orderData.orderTime).toLocaleString()
-            : "N/A",
-        };
-      })
-      .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
-
     return (
       <>
-        {keysWithTime.map((record) => (
-          <Paper
+        {orders.map((record) => (
+          <Card
             key={record.key}
             sx={{
               padding: "5px 12px",
@@ -119,14 +130,39 @@ function Purchase() {
               lineHeight: "2.2rem",
             }}
           >
-            <Box sx={{ fontSize: "16px" }}>{record.time}</Box>
+            <Box
+              sx={{
+                fontSize: "16px",
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              {record.time}
+              <Button
+                sx={{
+                  minWidth: "0",
+                  borderRadius: "0",
+                  bgcolor: "transparent",
+                  "&:hover": {
+                    minWidth: "0",
+                    borderRadius: "0",
+                    bgcolor: "transparent",
+                  },
+                }}
+                onClick={() => handleRemovePurchased(record.key)}
+              >
+                <ClearOutlinedIcon className={cx("remove")} />
+              </Button>
+            </Box>
             <Link
               className={cx("link-purchased")}
               to={`/purchase?keyword=${record.key}`}
             >
               {record.key}
             </Link>
-          </Paper>
+          </Card>
         ))}
       </>
     );
