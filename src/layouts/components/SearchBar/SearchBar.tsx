@@ -171,7 +171,7 @@ function SearchBar() {
                     sx={{
                       width: "100%",
                       fontSize: "14px",
-                      minHeight: "1.4rem",
+                      minHeight: "14px",
                       whiteSpace: "nowrap",
                       overflow: "hidden",
                       textOverflow: "ellipsis",

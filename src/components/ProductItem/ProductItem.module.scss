@@ -32,32 +32,32 @@
 }
 
 .title {
-  font-size: 1.6rem;
+  font-size: 16px;
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  min-height: 1.6rem;
+  min-height: 16px;
 }
 
 .verified {
   margin-left: 4px;
-  font-size: 1.4rem;
+  font-size: 14px;
   color: var(--checked-color);
 }
 
 .subtitle {
-  font-size: 1.4rem;
+  font-size: 14px;
   font-weight: 300;
   color: var(--title-color);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  min-height: 1.4rem;
+  min-height: 14px;
 }
 
 .price {
-  font-size: 1.4rem;
+  font-size: 14px;
   font-weight: 500;
   color: var(--price-color);
   margin-top: auto;
