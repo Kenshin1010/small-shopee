@@ -27,7 +27,7 @@ function CartIcon() {
         }}
         sx={{ marginRight: "48px" }}
       >
-        <StyledBadge badgeContent={totalUniqueItems} color="secondary">
+        <StyledBadge badgeContent={totalUniqueItems} color={"primary"}>
           <ShoppingCartIcon
             sx={{
               fontSize: "32px",
