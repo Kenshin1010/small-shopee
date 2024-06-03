@@ -37,12 +37,13 @@ function ProductItemAddNew(props: ProductNewItemType): ReactElement {
       <Stack
         direction={"row"}
         alignItems={"center"}
-        justifyContent={"space-between"}
+        justifyContent={"flex-end"}
         sx={{ width: "100%", paddingTop: "3px" }}
       >
         <Button
           sx={{
             ...buttonStyles,
+            display: "none",
           }}
           onClick={onChange}
           //   () => handleEditProductNew()
