@@ -13,7 +13,7 @@ const cx = classNames.bind(styles);
 
 export type ProductItemDetailType = {
   data: {
-    id?: number;
+    id?: string | number | undefined;
     title: string;
     subtitle?: string;
     isbn13?: number;
