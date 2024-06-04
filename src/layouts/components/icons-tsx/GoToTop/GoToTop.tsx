@@ -1,4 +1,5 @@
-import { Box, Button } from "@mui/material";
+import VerticalAlignTopIcon from "@mui/icons-material/VerticalAlignTop";
+import { Box, IconButton, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 
 function GoToTop() {
@@ -29,17 +30,15 @@ function GoToTop() {
   return (
     <Box>
       {showGoToTop && (
-        <Button
-          sx={{
-            position: "fixed",
-            right: "20px",
-            bottom: "20px",
-            fontSize: "16px",
-          }}
-          onClick={() => window.scrollTo(0, 0)}
-        >
-          Go to top
-        </Button>
+        <Tooltip disableFocusListener arrow title="Cart">
+          <IconButton
+            aria-label="to-top"
+            sx={{ position: "fixed", right: "20px", bottom: "20px" }}
+            onClick={() => window.scrollTo(0, 0)}
+          >
+            <VerticalAlignTopIcon sx={{ fontSize: "32px" }} />
+          </IconButton>
+        </Tooltip>
       )}
     </Box>
   );
