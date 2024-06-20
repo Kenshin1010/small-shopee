@@ -44,7 +44,8 @@ function SearchBar() {
       // }
 
       const newBook: ProductDataType[] = newBooks.map((data, index) => ({
-        id: index,
+        index: index,
+        _id: data._id,
         title: data.title,
         subtitle: data.subtitle,
         isbn13: data.isbn13,
@@ -57,7 +58,6 @@ function SearchBar() {
     };
 
     fetchNewBooks();
-    console.log(dataResult);
   }, []);
 
   const debouncedValue = useDebounce({
@@ -79,7 +79,8 @@ function SearchBar() {
       const books: Book[] = await searchBooks(debouncedValue);
 
       const result: ProductDataType[] = books.map((book, index) => ({
-        id: index,
+        index: index,
+        _id: book._id,
         title: book.title,
         subtitle: book.subtitle,
         isbn13: book.isbn13,
@@ -167,7 +168,7 @@ function SearchBar() {
                 {searchResult.map((result: ProductDataType) => (
                   <Button
                     className={cx("search-title-book")}
-                    key={result.id}
+                    key={result._id}
                     sx={{
                       width: "100%",
                       fontSize: "14px",

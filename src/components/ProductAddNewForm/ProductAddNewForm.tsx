@@ -3,12 +3,11 @@ import classNames from "classnames/bind";
 import { useEffect, useRef, useState } from "react";
 import ProductItemAddNew from "../ProductItemAddNew/ProductItemAddNew";
 import styles from "./ProductAddNewForm.module.scss";
-import { useId } from "../../hooks/useId";
 
 const cx = classNames.bind(styles);
 
 type Product = {
-  id?: string | number | undefined;
+  _id?: string;
   title: string;
   subtitle: string;
   price: string;
@@ -73,9 +72,6 @@ function ProductAddNewForm() {
     );
   }, [title, subtitle, price, isbn13, image]);
 
-  const autoId = useId();
-  console.log("autoId: ", autoId);
-
   const isISBN13Exists = (isbn13: number) => {
     const existingProducts = localStorage.getItem("newProducts");
     if (existingProducts) {
@@ -86,7 +82,6 @@ function ProductAddNewForm() {
   };
 
   const handleSubmit = () => {
-    const productId = autoId;
     const parsedIsbn13 = parseInt(isbn13, 10);
     const hasError =
       titleError ||
@@ -102,7 +97,6 @@ function ProductAddNewForm() {
       }
 
       const newProduct = {
-        id: productId,
         title,
         subtitle,
         price: formatPrice(price),
@@ -193,7 +187,7 @@ function ProductAddNewForm() {
 
   const handleRemoveProductNew = (productId: string | number | undefined) => {
     const updatedProducts = products.filter(
-      (product) => product.id !== productId
+      (product) => product._id !== productId
     );
     setProducts(updatedProducts);
     localStorage.setItem("newProducts", JSON.stringify(updatedProducts));

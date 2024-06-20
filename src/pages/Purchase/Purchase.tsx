@@ -106,7 +106,7 @@ function Purchase() {
               </Paper>
             </Grid>
             {products.map((item) => (
-              <Grid item key={item.product.isbn13} xs={12}>
+              <Grid item key={item.product._id} xs={12}>
                 <Paper>
                   <ProductItemPurchased product={item.product} />
                 </Paper>

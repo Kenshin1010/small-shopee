@@ -9,13 +9,13 @@ function ProductDetail() {
   const location = useLocation();
   const data: ProductDataType = location.state;
   const { dispatch, REDUCER_ACTIONS, cart } = useContext(CartContext);
-  const inCart = cart.some((item) => item.product.isbn13 === data.isbn13);
-  console.log("dataDetail", data);
+  const inCart = cart.some((item) => item.product._id === data._id);
+  console.log("dataDetail ID", data._id);
 
   return (
     <Grid container>
       {data && (
-        <Grid item key={data.id} xs={12} sm={8} md={8} lg={8}>
+        <Grid item key={data._id} xs={12} sm={8} md={8} lg={8}>
           <Paper>
             <ProductItemDetail
               data={data}

@@ -13,7 +13,7 @@ const cx = classNames.bind(styles);
 
 export type ProductItemDetailType = {
   data: {
-    id?: string | number | undefined;
+    _id?: string;
     title: string;
     subtitle?: string;
     isbn13?: number;
@@ -35,12 +35,14 @@ function ProductItemDetail(props: ProductItemDetailType): ReactElement {
   if (!data) {
     return <div>No data available</div>;
   }
+
   const handleAddToCart = () => {
-    if (data.isbn13 !== undefined) {
+    if (data._id !== undefined) {
       dispatch({
         type: REDUCER_ACTIONS.ADD,
         payload: {
           product: {
+            _id: data._id,
             isbn13: data.isbn13,
             title: data.title,
             price: data.price,
@@ -50,7 +52,7 @@ function ProductItemDetail(props: ProductItemDetailType): ReactElement {
         },
       });
     } else {
-      console.error("isbn13 is undefined");
+      console.error("ID is undefined");
     }
   };
 

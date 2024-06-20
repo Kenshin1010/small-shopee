@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const httpRequest = axios.create({
-  baseURL: `https://api.itbook.store/1.0/`,
+  baseURL: `http://localhost:5555/`,
 });
 
 export const get = async (path: string, options = {}) => {

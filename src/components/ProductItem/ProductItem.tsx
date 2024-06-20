@@ -8,7 +8,7 @@ import ProductImage from "../Image/ProductImage";
 const cx = classNames.bind(styles);
 
 export type ProductDataType = {
-  id?: string | number | undefined;
+  _id?: string;
   title: string;
   subtitle?: string;
   isbn13?: number;
@@ -20,6 +20,7 @@ export type ProductDataType = {
 
 function ProductItem(data: ProductDataType) {
   const navigate = useNavigate();
+
   return (
     <Box
       onClick={() => {

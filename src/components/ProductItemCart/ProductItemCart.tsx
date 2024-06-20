@@ -12,6 +12,7 @@ const cx = classNames.bind(styles);
 
 export type ProductItemCartType = {
   product: ProductDataType & {
+    _id?: string;
     isbn13?: number;
     title: string;
     price: string;

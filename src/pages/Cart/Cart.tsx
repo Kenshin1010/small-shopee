@@ -33,7 +33,7 @@ function Cart() {
   ) : (
     <Grid container spacing={2}>
       {cart.map((item) => (
-        <Grid item key={item.product.isbn13} xs={12} sm={12} md={12} lg={12}>
+        <Grid item key={item.product._id} xs={12} sm={12} md={12} lg={12}>
           <Paper>
             <ProductItemCart
               product={item.product}

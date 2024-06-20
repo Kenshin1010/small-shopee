@@ -15,7 +15,7 @@ const cx = classNames.bind(styles);
 
 export type ProductNewItemType = {
   product: ProductDataType & {
-    id?: string | number | undefined;
+    _id?: string;
     title: string;
     subtitle?: string;
     isbn13?: number;
@@ -65,7 +65,7 @@ function ProductItemAddNew(props: ProductNewItemType): ReactElement {
           sx={{
             ...buttonStyles,
           }}
-          onClick={() => onDelete?.(product.id as string)}
+          onClick={() => onDelete?.(product._id as string)}
         >
           <ClearOutlinedIcon className={cx("remove")} />
         </Button>

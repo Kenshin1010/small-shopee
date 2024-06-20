@@ -10,6 +10,7 @@ const cx = classNames.bind(styles);
 
 export type ProductItemPurchasedType = {
   product: ProductDataType & {
+    _id: string;
     isbn13: number;
     title: string;
     price: string;
