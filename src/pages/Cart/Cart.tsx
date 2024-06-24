@@ -43,7 +43,14 @@ function Cart() {
           </Paper>
         </Grid>
       ))}
-      <Grid item xs={12} sm={12} md={12} lg={12}>
+      <Grid
+        item
+        xs={12}
+        sm={12}
+        md={12}
+        lg={12}
+        sx={{ margin: "0 24px", maxWidth: "160px" }}
+      >
         <Paper>
           <Box sx={{ textAlign: "center" }}>
             <Typography sx={{ fontSize: "18px" }}>

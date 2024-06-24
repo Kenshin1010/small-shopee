@@ -23,8 +23,10 @@ export type ProductNewItemType = {
     image: string;
     url?: string;
     quantity?: number;
+    createdAt?: string;
+    updatedAt?: string; // timestamp
   };
-  onChange?: () => void;
+  onChange?: (productId: string | number | undefined) => void;
   onSave?: () => void;
   onDelete?: (productId: string | number | undefined) => void;
 };
@@ -43,17 +45,19 @@ function ProductItemAddNew(props: ProductNewItemType): ReactElement {
         <Button
           sx={{
             ...buttonStyles,
-            display: "none",
           }}
-          onClick={onChange}
-          //   () => handleEditProductNew()
+          onClick={() => {
+            navigate(`/addnew?edit=${product._id}`, {
+              state: { ...product },
+            });
+            onChange?.(product._id as string);
+          }}
         >
           <EditIcon className={cx("edit")} />
         </Button>
         <Button
           sx={{
             ...buttonStyles,
-            position: "absolute",
             display: "none",
           }}
           onClick={onSave}
@@ -102,10 +106,12 @@ const buttonStyles = {
   minWidth: "0",
   borderRadius: "0",
   bgcolor: "transparent",
+  marginLeft: "24px",
+
   "&:hover": {
     minWidth: "0",
     borderRadius: "0",
-    bgcolor: "transparent",
+    bgColor: "rgba(0, 0, 0, 0.04)",
   },
 };
 

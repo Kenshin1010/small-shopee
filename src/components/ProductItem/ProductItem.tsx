@@ -16,6 +16,8 @@ export type ProductDataType = {
   image: string;
   url?: string;
   quantity?: number;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 function ProductItem(data: ProductDataType) {

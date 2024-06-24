@@ -1,18 +1,26 @@
 import { Button, Grid, Paper } from "@mui/material";
+import { AxiosResponse } from "axios";
 import classNames from "classnames/bind";
 import { useEffect, useRef, useState } from "react";
+import { useData } from "../../hooks/useData";
+import useDebounce from "../../hooks/useDebounce";
+import httpRequest from "../../utils/httpRequest";
+import { ProductDataType } from "../ProductItem/ProductItem";
 import ProductItemAddNew from "../ProductItemAddNew/ProductItemAddNew";
 import styles from "./ProductAddNewForm.module.scss";
 
 const cx = classNames.bind(styles);
 
+// const user = true;
+
 type Product = {
   _id?: string;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   price: string;
   isbn13: number;
   image: string;
+  url: string;
 };
 
 export const formatPrice = (price: string | number | undefined) => {
@@ -40,6 +48,8 @@ export const formatPrice = (price: string | number | undefined) => {
 };
 
 function ProductAddNewForm() {
+  const { dataResult, setDataResult } = useData();
+
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [price, setPrice] = useState("");
@@ -48,107 +58,170 @@ function ProductAddNewForm() {
   const [products, setProducts] = useState<Product[]>([]);
 
   const [titleError, setTitleError] = useState(false);
-  const [subtitleError, setSubtitleError] = useState(false);
   const [priceError, setPriceError] = useState(false);
   const [isbn13Error, setIsbn13Error] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [isbn13ExistsError, setIsbn13ExistsError] = useState(false);
 
   const titleRef = useRef<HTMLInputElement | null>(null);
   const inputFileRef = useRef<HTMLInputElement | null>(null);
   const [isFormValid, setIsFormValid] = useState(false);
 
+  const debouncedIsbn13 = useDebounce({ value: isbn13, delay: 300 });
+  useEffect(() => {
+    const handleISBNValidation = async () => {
+      if (debouncedIsbn13.trim() === "") {
+        setIsbn13ExistsError(false);
+        return;
+      }
+
+      const parsedIsbn13 = parseInt(debouncedIsbn13, 10);
+      if (isNaN(parsedIsbn13)) {
+        setIsbn13ExistsError(false);
+        return;
+      }
+
+      try {
+        const exists = await isISBN13Exists(debouncedIsbn13);
+        setIsbn13ExistsError(exists);
+      } catch (error) {
+        console.error("Error checking ISBN:", error);
+        setIsbn13ExistsError(false);
+      }
+    };
+
+    handleISBNValidation();
+  }, [debouncedIsbn13]);
+
   useEffect(() => {
     const priceAsString = price.replace(/[^0-9.-]+/g, "");
     const parsedIsbn13 = parseInt(isbn13.trim(), 10);
-    // Kiểm tra xem tất cả các trường nhập liệu có đều không trống không
     setIsFormValid(
       title.trim() !== "" &&
-        subtitle.trim() !== "" &&
         priceAsString.trim() !== "" &&
-        !isNaN(parseFloat(priceAsString.trim())) && // Kiểm tra xem giá có phải là số không
+        !isNaN(parseFloat(priceAsString.trim())) &&
         isbn13.trim() !== "" &&
         !isNaN(parsedIsbn13) &&
         image !== ""
     );
   }, [title, subtitle, price, isbn13, image]);
 
-  const isISBN13Exists = (isbn13: number) => {
-    const existingProducts = localStorage.getItem("newProducts");
-    if (existingProducts) {
-      const parsedProducts: Product[] = JSON.parse(existingProducts);
-      return parsedProducts.some((product) => product.isbn13 === isbn13);
+  // const isISBN13Exists = async (isbn13: number) => {
+  //   try {
+  //     const response = await httpRequest.get(`/${isbn13}`);
+  //     return response.data.exists;
+  //   } catch (error) {
+  //     console.error("Error checking ISBN:", error);
+  //     return false;
+  //   }
+  // };
+
+  const isISBN13Exists = async (isbn: string): Promise<boolean> => {
+    try {
+      const response = await httpRequest.get(`/${isbn}`);
+      return response.status === 200; // Check if response is successful
+    } catch (error: any) {
+      if (error.response && error.response.status === 404) {
+        return false; // ISBN13 does not exist
+      }
+
+      console.error("Error checking ISBN:", error);
+      return false; // Handle other errors as ISBN13 does not exist
     }
-    return false;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const parsedIsbn13 = parseInt(isbn13, 10);
     const hasError =
-      titleError ||
-      subtitleError ||
-      priceError ||
-      isNaN(parsedIsbn13) ||
-      imageError;
+      titleError || priceError || isNaN(parsedIsbn13) || imageError;
 
     if (!hasError) {
-      if (isISBN13Exists(parsedIsbn13)) {
+      if (await isISBN13Exists(debouncedIsbn13)) {
         alert("ISBN13 already exists!");
         return;
       }
 
       const newProduct = {
         title,
-        subtitle,
+        subtitle: subtitle || "",
         price: formatPrice(price),
         isbn13: parsedIsbn13,
         image,
+        url: `${httpRequest.defaults.baseURL}/${isbn13}`,
       };
-      // Thêm sản phẩm mới vào danh sách sản phẩm
-      const updatedProducts = [...products, newProduct];
-      // Lưu danh sách sản phẩm mới vào localStorage
-      localStorage.setItem("newProducts", JSON.stringify(updatedProducts));
 
-      // Cập nhật state và làm sạch các trường nhập liệu
-      setProducts(updatedProducts);
-      setTitle("");
-      setSubtitle("");
-      setPrice("");
-      setIsbn13("");
-      setImage("");
+      try {
+        const response: AxiosResponse<any> = await httpRequest.post(
+          "/addnew",
+          newProduct
+        );
+        setDataResult?.((prevData) => [...prevData, response.data]);
+        console.log("Server response:", response.data);
 
-      // Đặt giá trị của input file về rỗng
-      if (inputFileRef.current) {
-        inputFileRef.current.value = "";
+        setProducts([...products, response.data]);
+        setTitle("");
+        setSubtitle("");
+        setPrice("");
+        setIsbn13("");
+        setImage("");
+
+        if (inputFileRef.current) {
+          inputFileRef.current.value = "";
+        }
+
+        titleRef.current?.focus();
+      } catch (error) {
+        console.error("Error adding new product:", error);
       }
 
-      titleRef.current?.focus();
+      // if (user) {
+      //   try {
+      //     const response: AxiosResponse<any> = await httpRequest.post(
+      //       "/addnew/user",
+      //       newProduct
+      //     );
+      //     console.log("Server response:", response.data);
+
+      //     setProducts([...products, response.data]);
+      //     setTitle("");
+      //     setSubtitle("");
+      //     setPrice("");
+      //     setIsbn13("");
+      //     setImage("");
+
+      //     if (inputFileRef.current) {
+      //       inputFileRef.current.value = "";
+      //     }
+
+      //     titleRef.current?.focus();
+      //   } catch (error) {
+      //     console.error("Error adding new product:", error);
+      //   }
+      // }
     } else {
       alert("Please enter a valid title and price.");
     }
   };
 
-  // Sử dụng useEffect để lấy danh sách sản phẩm từ localStorage khi component được tạo
-  useEffect(() => {
-    const savedProducts = localStorage.getItem("newProducts");
-    if (savedProducts) {
-      setProducts(JSON.parse(savedProducts));
-    }
-  }, []);
+  // const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (e.target.files && e.target.files[0]) {
+  //     const reader = new FileReader();
+  //     reader.onload = (event) => {
+  //       if (event.target && typeof event.target.result === "string") {
+  //         setImage(event.target.result);
+  //         setImageError(false);
+  //       }
+  //     };
+  //     reader.readAsDataURL(e.target.files[0]);
+  //   } else {
+  //     setImage("");
+  //   }
+  // };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target && typeof event.target.result === "string") {
-          setImage(event.target.result);
-          setImageError(false);
-        }
-      };
-      reader.readAsDataURL(e.target.files[0]);
-    } else {
-      // Nếu người dùng không chọn tệp tin mới, đặt Image về trống
-      setImage("");
-    }
+    const value = e.target.value;
+    setImage(value);
+    setImageError(value.trim() === "");
   };
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -160,7 +233,6 @@ function ProductAddNewForm() {
   const handleSubtitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSubtitle(value);
-    setSubtitleError(value.trim() === "");
   };
 
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -177,7 +249,7 @@ function ProductAddNewForm() {
     setPriceError(isNaN(priceAsNumber) || priceAsString.trim() === "");
   };
 
-  const handleIsbn13Change = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleIsbn13Change = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setIsbn13(value);
 
@@ -185,12 +257,34 @@ function ProductAddNewForm() {
     setIsbn13Error(isNaN(parsedValue) || value.trim() === "");
   };
 
-  const handleRemoveProductNew = (productId: string | number | undefined) => {
-    const updatedProducts = products.filter(
-      (product) => product._id !== productId
-    );
-    setProducts(updatedProducts);
-    localStorage.setItem("newProducts", JSON.stringify(updatedProducts));
+  const handleRemoveProductNew = async (
+    productId: string | number | undefined
+  ) => {
+    try {
+      const response: AxiosResponse<any> = await httpRequest.delete(
+        `/book/${productId}`
+      );
+      console.log("Product Deleted successfully has ID: ", response.data._id);
+      setDataResult?.((prevData) =>
+        prevData.filter((item) => item._id !== productId)
+      );
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    }
+  };
+
+  const handleEditProductNew = async (
+    productId: string | number | undefined
+  ) => {
+    try {
+      const response: AxiosResponse<any> = await httpRequest.put(
+        `/book/${productId}`
+      );
+      console.log("Product Updated successfully has ID: ", response.data._id);
+      setDataResult?.((prevData) => [...prevData, response.data]);
+    } catch (error) {
+      console.error("Error updating product:", error);
+    }
   };
 
   return (
@@ -205,18 +299,15 @@ function ProductAddNewForm() {
             onChange={handleTitleChange}
             style={{ borderColor: titleError ? "red" : "initial" }}
           />
-          {titleError && <div style={{ color: "red" }}>Title is required</div>}
+          {titleError && <div style={errorStyle}>Title is required</div>}
           <br />
           <input
             className={cx("input-form")}
             value={subtitle}
             placeholder="Enter subtitle ..."
             onChange={handleSubtitleChange}
-            style={{ borderColor: subtitleError ? "red" : "initial" }}
+            style={{ borderColor: "initial" }}
           />
-          {subtitleError && (
-            <div style={{ color: "red" }}>Subtitle is required</div>
-          )}
           <br />
           <input
             className={cx("input-form")}
@@ -225,7 +316,7 @@ function ProductAddNewForm() {
             onChange={handlePriceChange}
             style={{ borderColor: priceError ? "red" : "initial" }}
           />
-          {priceError && <div style={{ color: "red" }}>Price is invalid</div>}
+          {priceError && <div style={errorStyle}>Price is invalid</div>}
           <br />
           <input
             className={cx("input-form")}
@@ -234,9 +325,21 @@ function ProductAddNewForm() {
             onChange={handleIsbn13Change}
             style={{ borderColor: isbn13Error ? "red" : "initial" }}
           />
-          {isbn13Error && <div style={{ color: "red" }}>ISBN13 is invalid</div>}
+          {isbn13Error && <div style={errorStyle}>ISBN13 is invalid</div>}
+          {isbn13ExistsError && (
+            <div style={errorStyle}>ISBN13 already exists</div>
+          )}
           <br />
           <input
+            className={cx("input-form")}
+            value={image}
+            placeholder="Enter image ..."
+            onChange={handleImageChange}
+            style={{ borderColor: imageError ? "red" : "initial" }}
+          />
+          {imageError && <div style={errorStyle}>IMAGE is invalid</div>}
+          <br />
+          {/* <input
             className={cx("input-file")}
             ref={inputFileRef}
             type={"file"}
@@ -244,10 +347,14 @@ function ProductAddNewForm() {
             onChange={handleImageChange}
             style={{ borderColor: imageError ? "red" : "initial" }}
           />
-          {imageError && <div style={{ color: "red" }}>Image is required</div>}
-          <br />
+          {imageError && <div style={errorStyle}>Image is required</div>}
+          <br /> */}
           <Button
-            onClick={handleSubmit}
+            onClick={() => {
+              ["/addnew?edit="].includes(window.location.pathname)
+                ? handleEditProductNew
+                : handleSubmit;
+            }}
             disabled={!isFormValid}
             sx={{
               width: "100%",
@@ -266,17 +373,20 @@ function ProductAddNewForm() {
               margin: "12px",
             }}
           >
-            Add
+            {[`/addnew?edit=`].includes(window.location.pathname)
+              ? "Save"
+              : "Add"}
           </Button>
         </Grid>
       </Grid>
       <Grid container sx={{ gap: "12px", margin: "12px" }}>
-        {products.map((product: Product, index: number) => (
-          <Grid item key={index} xs={12} sm={4} md={2} lg={2}>
+        {dataResult.map((product: ProductDataType) => (
+          <Grid item key={product._id} xs={12} sm={4} md={2} lg={2}>
             <Paper>
               <ProductItemAddNew
                 product={product}
-                onDelete={handleRemoveProductNew}
+                onDelete={() => handleRemoveProductNew(product._id)}
+                onChange={() => handleEditProductNew(product._id)}
               />
             </Paper>
           </Grid>
@@ -285,5 +395,11 @@ function ProductAddNewForm() {
     </div>
   );
 }
+
+// styles
+const errorStyle = {
+  marginLeft: "12px",
+  color: "red",
+};
 
 export default ProductAddNewForm;
