@@ -24,7 +24,6 @@ function SearchBar() {
   // const [searchResult, setSearchResult] = useState<ProductDataType[]>([]);
   const {
     searchResult = [],
-    dataResult = [],
     setSearchResult = () => {},
     setDataResult = () => {},
   } = useData();
