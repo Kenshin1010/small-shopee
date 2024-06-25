@@ -36,12 +36,6 @@ function SearchBar() {
   useEffect(() => {
     const fetchNewBooks = async () => {
       const newBooks: Book[] = await getNewBooks();
-      // const storedBooks = localStorage.getItem("newBooks");
-
-      // let newBooks: Book[] = [];
-      // if (storedBooks) {
-      //   newBooks = JSON.parse(storedBooks);
-      // }
 
       const newBook: ProductDataType[] = newBooks.map((data, index) => ({
         index: index,

@@ -8,6 +8,8 @@ import httpRequest from "../../utils/httpRequest";
 import { ProductDataType } from "../ProductItem/ProductItem";
 import ProductItemAddNew from "../ProductItemAddNew/ProductItemAddNew";
 import styles from "./ProductAddNewForm.module.scss";
+import { useLocation } from "react-router-dom";
+import { Book, getNewBooks } from "../../services";
 
 const cx = classNames.bind(styles);
 
@@ -49,6 +51,7 @@ export const formatPrice = (price: string | number | undefined) => {
 
 function ProductAddNewForm() {
   const { dataResult, setDataResult } = useData();
+  const location = useLocation();
 
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
@@ -68,30 +71,27 @@ function ProductAddNewForm() {
   const [isFormValid, setIsFormValid] = useState(false);
 
   const debouncedIsbn13 = useDebounce({ value: isbn13, delay: 300 });
+
   useEffect(() => {
-    const handleISBNValidation = async () => {
-      if (debouncedIsbn13.trim() === "") {
-        setIsbn13ExistsError(false);
-        return;
-      }
+    const fetchNewBooks = async () => {
+      const newBooks: Book[] = await getNewBooks();
 
-      const parsedIsbn13 = parseInt(debouncedIsbn13, 10);
-      if (isNaN(parsedIsbn13)) {
-        setIsbn13ExistsError(false);
-        return;
-      }
+      const newBook: ProductDataType[] = newBooks.map((data, index) => ({
+        index: index,
+        _id: data._id,
+        title: data.title,
+        subtitle: data.subtitle,
+        isbn13: data.isbn13,
+        price: data.price,
+        image: data.image,
+        url: data.url,
+      }));
 
-      try {
-        const exists = await isISBN13Exists(debouncedIsbn13);
-        setIsbn13ExistsError(exists);
-      } catch (error) {
-        console.error("Error checking ISBN:", error);
-        setIsbn13ExistsError(false);
-      }
+      setDataResult?.(newBook);
     };
 
-    handleISBNValidation();
-  }, [debouncedIsbn13]);
+    fetchNewBooks();
+  }, [dataResult]);
 
   useEffect(() => {
     const priceAsString = price.replace(/[^0-9.-]+/g, "");
@@ -137,9 +137,12 @@ function ProductAddNewForm() {
 
     if (!hasError) {
       if (await isISBN13Exists(debouncedIsbn13)) {
-        alert("ISBN13 already exists!");
+        setIsbn13ExistsError(true);
+        alert("ISBN13 already exists."); // Set error if ISBN13 already exists
         return;
       }
+
+      setIsbn13ExistsError(false);
 
       const newProduct = {
         title,
@@ -264,7 +267,9 @@ function ProductAddNewForm() {
       const response: AxiosResponse<any> = await httpRequest.delete(
         `/book/${productId}`
       );
-      console.log("Product Deleted successfully has ID: ", response.data._id);
+      console.log("Product Deleted successfully has ID: ", productId);
+      console.log("Response: ", response);
+
       setDataResult?.((prevData) =>
         prevData.filter((item) => item._id !== productId)
       );
@@ -273,19 +278,118 @@ function ProductAddNewForm() {
     }
   };
 
-  const handleEditProductNew = async (
+  const handleUpdateProductNew = async (
     productId: string | number | undefined
   ) => {
     try {
-      const response: AxiosResponse<any> = await httpRequest.put(
-        `/book/${productId}`
+      const parsedIsbn13 = parseInt(isbn13, 10); // Parse isbn13 to number
+      if (isNaN(parsedIsbn13)) {
+        console.error("Invalid ISBN13:", isbn13);
+
+        return;
+      }
+
+      const productToUpdate = {
+        title,
+        subtitle,
+        price,
+        isbn13: parsedIsbn13, // Use parsed ISBN13
+        image,
+        url: `${httpRequest.defaults.baseURL}/${isbn13}`, // Adjust the URL format as needed
+      };
+
+      // Retrieve the original ISBN13 from the product being updated
+      const originalProduct = dataResult.find(
+        (product) => product._id === productId
       );
+      if (!originalProduct) {
+        console.error(`Product with ID ${productId} not found in dataResult.`);
+        return;
+      }
+      const originalIsbn13 = originalProduct.isbn13;
+
+      // Check if ISBN13 is being updated and if it exists for another product
+      if (parsedIsbn13 !== originalIsbn13) {
+        if (await isISBN13Exists(debouncedIsbn13.toString())) {
+          // Ensure isISBN13Exists expects a string
+          setIsbn13ExistsError(true);
+          alert("ISBN13 already exists."); // Set error if ISBN13 already exists
+          return;
+        }
+      }
+
+      setIsbn13ExistsError(false); // Reset error if ISBN13 does not exist
+
+      const response: AxiosResponse<any> = await httpRequest.put(
+        `/book/${productId}`,
+        productToUpdate
+      );
+
       console.log("Product Updated successfully has ID: ", response.data._id);
-      setDataResult?.((prevData) => [...prevData, response.data]);
+
+      // Provide UI feedback
+      alert("Product updated successfully!");
+
+      setDataResult?.((prevData) =>
+        prevData.map((item) => (item._id === productId ? response.data : item))
+      );
+
+      // Optionally reset form fields
+      setTitle("");
+      setSubtitle("");
+      setPrice("");
+      setIsbn13("");
+      setImage("");
     } catch (error) {
       console.error("Error updating product:", error);
     }
   };
+
+  const handleFillDataToEditProductNew = (
+    productId: string | number | undefined
+  ) => {
+    const productToEdit = dataResult.find(
+      (product) => product._id === productId
+    );
+
+    if (productToEdit) {
+      setTitle(productToEdit.title);
+      setSubtitle(productToEdit.subtitle || "");
+      setPrice(productToEdit.price);
+      setIsbn13((productToEdit.isbn13 || "").toString());
+      setImage(productToEdit.image);
+
+      // Optionally, scroll to the top of the form or focus on the title input
+      if (titleRef.current) {
+        titleRef.current.scrollIntoView({ behavior: "smooth" });
+        titleRef.current.focus();
+      }
+    }
+  };
+
+  const handleButtonClick = () => {
+    const { pathname, search } = location;
+
+    if (pathname === "/addnew" && search.includes("?edit=")) {
+      handleUpdateProductNew(search.replace("?edit=", ""));
+    } else {
+      handleSubmit();
+    }
+  };
+
+  const getButtonText = () => {
+    const { pathname, search } = location;
+
+    if (pathname === "/addnew" && search.includes("?edit=")) {
+      return "Save";
+    } else {
+      return "Add";
+    }
+  };
+
+  useEffect(() => {
+    handleButtonClick;
+  }, [location]);
 
   return (
     <div className={cx("wrapper")}>
@@ -350,11 +454,7 @@ function ProductAddNewForm() {
           {imageError && <div style={errorStyle}>Image is required</div>}
           <br /> */}
           <Button
-            onClick={() => {
-              ["/addnew?edit="].includes(window.location.pathname)
-                ? handleEditProductNew
-                : handleSubmit;
-            }}
+            onClick={handleButtonClick}
             disabled={!isFormValid}
             sx={{
               width: "100%",
@@ -373,9 +473,7 @@ function ProductAddNewForm() {
               margin: "12px",
             }}
           >
-            {[`/addnew?edit=`].includes(window.location.pathname)
-              ? "Save"
-              : "Add"}
+            {getButtonText()}
           </Button>
         </Grid>
       </Grid>
@@ -386,7 +484,7 @@ function ProductAddNewForm() {
               <ProductItemAddNew
                 product={product}
                 onDelete={() => handleRemoveProductNew(product._id)}
-                onChange={() => handleEditProductNew(product._id)}
+                onChange={() => handleFillDataToEditProductNew(product._id)}
               />
             </Paper>
           </Grid>
