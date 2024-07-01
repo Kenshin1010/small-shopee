@@ -2,7 +2,7 @@ import { ReactElement } from "react";
 import classNames from "classnames/bind";
 import styles from "./ProductItemAddNew.module.scss";
 
-import { Box, Button, Stack } from "@mui/material";
+import { Box, Button, Stack, Tooltip } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import ProductImage from "../Image/ProductImage";
 
@@ -26,9 +26,9 @@ export type ProductNewItemType = {
     createdAt?: string;
     updatedAt?: string; // timestamp
   };
-  onChange?: (productId: string | number | undefined) => void;
+  onChange?: (productId: string | undefined) => void;
   onSave?: () => void;
-  onDelete?: (productId: string | number | undefined) => void;
+  onDelete?: (productId: string | undefined) => void;
 };
 
 function ProductItemAddNew(props: ProductNewItemType): ReactElement {
@@ -42,37 +42,43 @@ function ProductItemAddNew(props: ProductNewItemType): ReactElement {
         justifyContent={"flex-end"}
         sx={{ width: "100%", paddingTop: "3px" }}
       >
-        <Button
-          sx={{
-            ...buttonStyles,
-          }}
-          onClick={() => {
-            navigate(`/addnew?edit=${product._id}`, {
-              state: { ...product },
-            });
-            onChange?.(product._id as string);
-          }}
-        >
-          <EditIcon className={cx("edit")} />
-        </Button>
-        <Button
-          sx={{
-            ...buttonStyles,
-            display: "none",
-          }}
-          onClick={onSave}
-          //   () => handleSaveProductNew()
-        >
-          <DoneIcon className={cx("save")} />
-        </Button>
-        <Button
-          sx={{
-            ...buttonStyles,
-          }}
-          onClick={() => onDelete?.(product._id as string)}
-        >
-          <ClearOutlinedIcon className={cx("remove")} />
-        </Button>
+        <Tooltip title="Edit" arrow disableFocusListener>
+          <Button
+            sx={{
+              ...buttonStyles,
+            }}
+            onClick={() => {
+              navigate(`/addnew?edit=${product._id}`, {
+                state: { ...product },
+              });
+              onChange?.(product._id as string);
+            }}
+          >
+            <EditIcon className={cx("edit")} />
+          </Button>
+        </Tooltip>
+        <Tooltip title="Save" arrow disableFocusListener>
+          <Button
+            sx={{
+              ...buttonStyles,
+              display: "none",
+            }}
+            onClick={onSave}
+            //   () => handleSaveProductNew()
+          >
+            <DoneIcon className={cx("save")} />
+          </Button>
+        </Tooltip>
+        <Tooltip title="Delete" arrow disableFocusListener>
+          <Button
+            sx={{
+              ...buttonStyles,
+            }}
+            onClick={() => onDelete?.(product._id as string)}
+          >
+            <ClearOutlinedIcon className={cx("remove")} />
+          </Button>
+        </Tooltip>
       </Stack>
       <Box
         onClick={() => {

@@ -1,66 +1,78 @@
-import { createContext, ReactElement, useMemo, useReducer } from "react";
+import {
+  createContext,
+  ReactElement,
+  useEffect,
+  useMemo,
+  useReducer,
+} from "react";
 import { ProductItemCartType } from "../components/ProductItemCart/ProductItemCart";
+import { useData } from "../hooks/useData";
 
 type CartStateType = { cart: ProductItemCartType[] };
 
 const initCartState: CartStateType = { cart: [] };
 
-const REDUCER_ACTION_TYPE = {
+export const REDUCER_ACTION_TYPE = {
   ADD: "ADD",
   REMOVE: "REMOVE",
   QUANTITY: "QUANTITY",
   SUBMIT: "SUBMIT",
+  UPDATE: "UPDATE",
 };
 
 export type ReducerActionType = typeof REDUCER_ACTION_TYPE;
 
 export type ReducerAction = {
   type: string;
-  payload?: { product: ProductItemCartType["product"] };
+  payload?: {
+    product?: ProductItemCartType["product"];
+  };
 };
 
-const reducer = (
+const cartReducer = (
   state: CartStateType,
   action: ReducerAction
 ): CartStateType => {
   switch (action.type) {
     case REDUCER_ACTION_TYPE.ADD: {
-      if (!action.payload || !action.payload.product) {
+      const { product } = action.payload || {};
+      if (!product) {
         console.error("Action payload or product is missing", action);
         return state;
       }
 
-      const _id: string | undefined = action.payload?.product?._id;
-      const isbn13: number | undefined = action.payload?.product?.isbn13;
-      const title = action.payload?.product?.title;
-      const price = action.payload?.product?.price;
-      const image = action.payload?.product?.image;
-      const quantity = action.payload?.product?.quantity;
-
-      if (
-        _id === undefined ||
-        isbn13 === undefined ||
-        title === undefined ||
-        price === undefined ||
-        image === undefined ||
-        quantity === undefined
-      ) {
-        console.error("Some parameters are undefined", action);
-        return state;
-      }
-
-      const updatedCart = updateCart(
-        state.cart,
-        _id,
-        isbn13,
-        title,
-        price,
-        image,
-        1
+      const existingItemIndex = state.cart.findIndex(
+        (item) => item.product._id === product._id
       );
-      console.log("Quantity: ", quantity);
-
-      return { ...state, cart: updatedCart };
+      if (existingItemIndex !== -1) {
+        // Update existing item in cart
+        const updatedItem = {
+          ...state.cart[existingItemIndex],
+          product: {
+            ...state.cart[existingItemIndex].product,
+            price: product.price, // Update price here
+          },
+        };
+        const updatedCart = [...state.cart];
+        updatedCart[existingItemIndex] = updatedItem;
+        return { ...state, cart: updatedCart };
+      } else {
+        // Add new item to cart
+        return {
+          ...state,
+          cart: [
+            ...state.cart,
+            {
+              product: {
+                ...product,
+                quantity: 1, // Assuming default quantity is 1 when adding new item
+              },
+              dispatch: () => {}, // Provide a placeholder dispatch function
+              REDUCER_ACTIONS: REDUCER_ACTION_TYPE, // Provide the reducer actions enum
+            },
+          ],
+        };
+      }
     }
     case REDUCER_ACTION_TYPE.REMOVE: {
       if (!action.payload || !action.payload.product) {
@@ -87,11 +99,31 @@ const reducer = (
     case REDUCER_ACTION_TYPE.SUBMIT: {
       return { ...state, cart: [] };
     }
+    case REDUCER_ACTION_TYPE.UPDATE: {
+      if (!action.payload || !action.payload.product) {
+        console.error("Action payload or product is missing", action);
+        return state;
+      }
+
+      const { product } = action.payload;
+      const updatedCart = updateCart(
+        state.cart,
+        product._id ?? "",
+        product.isbn13 ?? 0,
+        product.title,
+        product.price,
+        product.image,
+        0 // quantityDelta is 0 because we're updating existing product
+      );
+
+      return { ...state, cart: updatedCart };
+    }
+
     default:
-      throw new Error("Unidentified reducer action type");
+      console.error("Unidentified reducer action type");
+      return { ...state };
   }
 };
-
 // Update cart
 const updateCart = (
   cart: ProductItemCartType[],
@@ -109,7 +141,8 @@ const updateCart = (
     price === undefined ||
     image === undefined
   ) {
-    throw new Error("Some parameters are undefined");
+    console.error("Some parameters are undefined");
+    return cart;
   }
   const itemExists = cart.find((item) => item.product._id === _id);
   const quantity = itemExists ? itemExists.product.quantity + quantityDelta : 1;
@@ -127,7 +160,8 @@ const updateCart = (
 // Remove cart item
 const removeCartItem = (cart: ProductItemCartType[], _id: string) => {
   if (_id === undefined) {
-    throw new Error("ID is undefined");
+    console.error("ID is undefined");
+    return cart;
   }
   return cart.filter((item) => item.product._id !== _id);
 };
@@ -139,14 +173,17 @@ const updateCartItemQuantity = (
   quantity: number
 ) => {
   if (_id === undefined || quantity === undefined) {
-    throw new Error("ID or quantity is undefined");
+    console.error("ID or quantity is undefined");
+    return cart;
   }
   if (quantity <= 0) {
-    throw new Error("Quantity must be greater than 0");
+    console.error("Quantity must be greater than 0");
+    return cart;
   }
   const itemExists = cart.find((item) => item.product._id === _id);
   if (!itemExists) {
-    throw new Error("Item must exists in order to update quantity");
+    console.error("Item must exist in order to update quantity");
+    return cart;
   }
   const updatedItem: ProductItemCartType = {
     ...itemExists,
@@ -158,37 +195,39 @@ const updateCartItemQuantity = (
   return updatedCart;
 };
 
-const useCartContext = (initCartState: CartStateType) => {
-  const [state, dispatch] = useReducer(reducer, initCartState);
+const useCartContext = () => {
+  const [state, dispatch] = useReducer(cartReducer, initCartState);
 
-  const REDUCER_ACTIONS = useMemo(() => {
-    return REDUCER_ACTION_TYPE;
-  }, []);
-  const totalItems = state.cart.reduce((previousValue, cartItem) => {
-    return previousValue + cartItem.product.quantity;
-  }, 0);
+  const REDUCER_ACTIONS = useMemo(() => REDUCER_ACTION_TYPE, []);
 
-  const totalPrice = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(
-    state.cart.reduce((previousValue, cartItem) => {
-      const priceCartItemAsString = cartItem.product.price.replace(
-        /[^0-9.-]+/g,
-        ""
-      );
-      const priceCartItemAsNumber = parseFloat(priceCartItemAsString);
-      return previousValue + cartItem.product.quantity * priceCartItemAsNumber;
-    }, 0)
+  const totalItems = useMemo(
+    () => state.cart.reduce((acc, item) => acc + item.product.quantity, 0),
+    [state.cart]
   );
 
-  const cart = state.cart.map((item) => ({
-    ...item,
-    dispatch,
-    REDUCER_ACTIONS,
-  }));
+  const cart = useMemo(
+    () =>
+      state.cart.map((item) => ({
+        ...item,
+        dispatch,
+        REDUCER_ACTIONS,
+      })),
+    [state.cart, REDUCER_ACTIONS]
+  );
 
-  const totalUniqueItems = cart.length;
+  const totalPrice = useMemo(() => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(
+      state.cart.reduce((total, item) => {
+        const price = parseFloat(item.product.price.replace(/[^0-9.-]+/g, ""));
+        return total + item.product.quantity * price;
+      }, 0)
+    );
+  }, [state.cart]);
+
+  const totalUniqueItems = useMemo(() => cart.length, [cart]);
 
   return {
     dispatch,
@@ -217,7 +256,38 @@ export const CartContext =
 type ChildrenType = { children?: ReactElement | ReactElement[] };
 
 export const CartProvider = ({ children }: ChildrenType): ReactElement => {
-  const contextValue = useCartContext(initCartState);
+  const [, dispatch] = useReducer(cartReducer, initCartState);
+  const { dataResult } = useData();
+
+  useEffect(() => {
+    if (dataResult) {
+      const updatedProductsCart = dataResult.map((productData) => {
+        const product = {
+          _id: productData._id,
+          isbn13: productData.isbn13,
+          title: productData.title,
+          price: productData.price,
+          image: productData.image,
+          quantity: productData.quantity || 1,
+        };
+
+        return {
+          product,
+          dispatch: () => {},
+          REDUCER_ACTIONS: REDUCER_ACTION_TYPE,
+        };
+      });
+
+      updatedProductsCart.forEach((updatedProduct) => {
+        dispatch({
+          type: REDUCER_ACTION_TYPE.UPDATE,
+          payload: { product: updatedProduct.product },
+        });
+      });
+    }
+  }, [dataResult, dispatch, REDUCER_ACTION_TYPE]);
+
+  const contextValue = useCartContext();
   return (
     <CartContext.Provider value={contextValue}>{children}</CartContext.Provider>
   );

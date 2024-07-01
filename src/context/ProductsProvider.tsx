@@ -1,6 +1,7 @@
-import { createContext, ReactElement, useState } from "react";
+import { createContext, ReactElement, useEffect, useState } from "react";
 import { ProductDataType } from "../components/ProductItem/ProductItem";
-import { Book } from "../services";
+import { Book, getNewBooks } from "../services";
+import { useData } from "../hooks/useData";
 
 const storedBooks = localStorage.getItem("newBooks");
 
@@ -34,6 +35,29 @@ export const ProductsProvider = ({ children }: ChildrenType): ReactElement => {
   //   };
   //   fetchProducts().then((products) => setProducts(products));
   // }, []);
+
+  const { dataResult, setDataResult } = useData();
+
+  useEffect(() => {
+    const fetchNewBooks = async () => {
+      const newBooks: Book[] = await getNewBooks();
+
+      const newBook: ProductDataType[] = newBooks.map((data, index) => ({
+        index: index,
+        _id: data._id,
+        title: data.title,
+        subtitle: data.subtitle,
+        isbn13: data.isbn13,
+        price: data.price,
+        image: data.image,
+        url: data.url,
+      }));
+
+      setDataResult?.(newBook);
+    };
+
+    fetchNewBooks();
+  }, [dataResult]);
 
   return (
     <ProductsContext.Provider value={{ products }}>

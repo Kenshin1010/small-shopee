@@ -49,7 +49,9 @@ function Cart() {
         sm={12}
         md={12}
         lg={12}
-        sx={{ margin: "0 24px", maxWidth: "160px" }}
+        sx={{
+          margin: cart.length === 0 ? "0 24px" : "0",
+        }}
       >
         <Paper>
           <Box sx={{ textAlign: "center" }}>

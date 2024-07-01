@@ -1,7 +1,7 @@
 import { Button, Grid, Paper } from "@mui/material";
 import { AxiosResponse } from "axios";
 import classNames from "classnames/bind";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useData } from "../../hooks/useData";
 import useDebounce from "../../hooks/useDebounce";
 import httpRequest from "../../utils/httpRequest";
@@ -10,6 +10,7 @@ import ProductItemAddNew from "../ProductItemAddNew/ProductItemAddNew";
 import styles from "./ProductAddNewForm.module.scss";
 import { useLocation } from "react-router-dom";
 import { Book, getNewBooks } from "../../services";
+import CartContext, { REDUCER_ACTION_TYPE } from "../../context/CartProvider";
 
 const cx = classNames.bind(styles);
 
@@ -51,6 +52,7 @@ export const formatPrice = (price: string | number | undefined) => {
 
 function ProductAddNewForm() {
   const { dataResult, setDataResult } = useData();
+  const { dispatch } = useContext(CartContext);
   const location = useLocation();
 
   const [title, setTitle] = useState("");
@@ -260,9 +262,7 @@ function ProductAddNewForm() {
     setIsbn13Error(isNaN(parsedValue) || value.trim() === "");
   };
 
-  const handleRemoveProductNew = async (
-    productId: string | number | undefined
-  ) => {
+  const handleRemoveProductNew = async (productId: string | undefined) => {
     try {
       const response: AxiosResponse<any> = await httpRequest.delete(
         `/book/${productId}`
@@ -273,14 +273,26 @@ function ProductAddNewForm() {
       setDataResult?.((prevData) =>
         prevData.filter((item) => item._id !== productId)
       );
+
+      dispatch({
+        type: REDUCER_ACTION_TYPE.REMOVE,
+        payload: {
+          product: {
+            _id: productId,
+            title: "",
+            price: "",
+            image: "",
+            quantity: 0,
+            isbn13: 0,
+          },
+        },
+      });
     } catch (error) {
       console.error("Error deleting product:", error);
     }
   };
 
-  const handleUpdateProductNew = async (
-    productId: string | number | undefined
-  ) => {
+  const handleUpdateProductNew = async (productId: string | undefined) => {
     try {
       const parsedIsbn13 = parseInt(isbn13, 10); // Parse isbn13 to number
       if (isNaN(parsedIsbn13)) {
@@ -340,14 +352,26 @@ function ProductAddNewForm() {
       setPrice("");
       setIsbn13("");
       setImage("");
+
+      const updatedProduct = {
+        ...originalProduct,
+        ...response.data,
+      };
+
+      // Gửi action UPDATE tới CartProvider khi sản phẩm được cập nhật thành công
+
+      dispatch({
+        type: REDUCER_ACTION_TYPE.UPDATE,
+        payload: {
+          product: updatedProduct,
+        },
+      });
     } catch (error) {
       console.error("Error updating product:", error);
     }
   };
 
-  const handleFillDataToEditProductNew = (
-    productId: string | number | undefined
-  ) => {
+  const handleFillDataToEditProductNew = (productId: string | undefined) => {
     const productToEdit = dataResult.find(
       (product) => product._id === productId
     );
