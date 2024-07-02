@@ -93,7 +93,7 @@ function ProductAddNewForm() {
     };
 
     fetchNewBooks();
-  }, [dataResult]);
+  }, [setDataResult]);
 
   useEffect(() => {
     const priceAsString = price.replace(/[^0-9.-]+/g, "");
@@ -107,16 +107,6 @@ function ProductAddNewForm() {
         image !== ""
     );
   }, [title, subtitle, price, isbn13, image]);
-
-  // const isISBN13Exists = async (isbn13: number) => {
-  //   try {
-  //     const response = await httpRequest.get(`/${isbn13}`);
-  //     return response.data.exists;
-  //   } catch (error) {
-  //     console.error("Error checking ISBN:", error);
-  //     return false;
-  //   }
-  // };
 
   const isISBN13Exists = async (isbn: string): Promise<boolean> => {
     try {

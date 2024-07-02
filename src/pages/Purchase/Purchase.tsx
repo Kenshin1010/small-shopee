@@ -11,119 +11,124 @@ import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
 
 const cx = classNames.bind(styles);
 
-interface OrderData {
-  cart: ProductItemPurchasedType[];
-  orderTime: string;
-}
-
-interface TimeRecord {
-  key: string;
-  time: string;
+interface PurchasedHistoryItem {
+  orderName: string;
+  orderData: {
+    cartProductItems: ProductItemPurchasedType[];
+    orderTime: string;
+  };
 }
 
 function Purchase() {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const keyword = searchParams.get("keyword");
-  const [orders, setOrders] = useState<TimeRecord[]>([]);
+  const [purchasedHistory, setPurchasedHistory] = useState<
+    PurchasedHistoryItem[]
+  >([]);
 
   useEffect(() => {
-    const fetchOrders = () => {
-      const keysWithTime: TimeRecord[] = Object.keys(localStorage)
-        .filter((key) => key.includes("purchased"))
-        .map((key) => {
-          const orderData: OrderData = JSON.parse(
-            localStorage.getItem(key) || "{}"
-          );
-          return {
-            key,
-            time: orderData.orderTime
-              ? new Date(orderData.orderTime).toLocaleString()
-              : "N/A",
-          };
-        })
-        .sort(
-          (a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()
+    const fetchPurchasedHistory = () => {
+      let storedPurchasedHistory: PurchasedHistoryItem[] = JSON.parse(
+        localStorage.getItem("PurchasedHistory") || "[]"
+      );
+      storedPurchasedHistory = storedPurchasedHistory.sort((a, b) => {
+        return (
+          new Date(b.orderData.orderTime).getTime() -
+          new Date(a.orderData.orderTime).getTime()
         );
-
-      setOrders(keysWithTime);
+      });
+      setPurchasedHistory(storedPurchasedHistory);
     };
 
-    fetchOrders();
+    fetchPurchasedHistory();
   }, []);
 
   const handleRemovePurchased = (key: string) => {
-    localStorage.removeItem(key);
-    setOrders((prevOrders) => prevOrders.filter((order) => order.key !== key));
+    // console.log("Removing order with key:", key);
+    // localStorage.removeItem(key);
+    setPurchasedHistory((prevHistory) =>
+      prevHistory.filter((historyItem) => historyItem.orderName !== key)
+    );
+
+    // Cập nhật lại localStorage sau khi xoá
+    const updatedPurchasedHistory = purchasedHistory.filter(
+      (historyItem) => historyItem.orderName !== key
+    );
+    localStorage.setItem(
+      "PurchasedHistory",
+      JSON.stringify(updatedPurchasedHistory)
+    );
   };
 
   if (keyword) {
-    const orderKey = `${keyword}`;
-    const orderFromLocalStorage = localStorage.getItem(orderKey);
-    const orderData: OrderData | null = orderFromLocalStorage
-      ? JSON.parse(orderFromLocalStorage)
-      : null;
-    const products: ProductItemPurchasedType[] = orderData
-      ? orderData.cart
-      : [];
-    const orderTime = orderData ? orderData.orderTime : null;
+    const selectedOrder = purchasedHistory.find(
+      (historyItem) => historyItem.orderName === `${keyword}`
+    );
 
-    // Calculate total items and total price of the order
-    let totalItems = 0;
-    let totalPrice = 0;
-    products.forEach((item) => {
-      totalItems += item.product.quantity;
-      totalPrice +=
-        item.product.quantity *
-        parseFloat(item.product.price.replace(/[^0-9.-]+/g, ""));
-    });
+    if (selectedOrder) {
+      const { cartProductItems, orderTime } = selectedOrder.orderData;
 
-    if (products.length > 0) {
-      return (
-        <Box>
-          <Paper sx={{ marginBottom: "12px" }}>
-            <Typography variant="h1" fontSize={"20px"}>
-              Thank you for your order.
-            </Typography>
-            <Typography variant="h2" fontSize={"16px"}>
-              Time: {orderTime}
-            </Typography>
-            <Typography variant="h2" fontSize={"16px"}>
-              Order Key: {keyword}
-            </Typography>
-          </Paper>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <Paper>
-                <Box sx={{ textAlign: "center" }}>
-                  <Typography sx={{ fontSize: "18px" }}>
-                    Total Items: {totalItems}
-                  </Typography>
-                  <Typography sx={{ fontSize: "18px" }}>
-                    Total Price: {formatPrice(totalPrice)}
-                  </Typography>
-                </Box>
-              </Paper>
-            </Grid>
-            {products.map((item) => (
-              <Grid item key={item.product._id} xs={12}>
+      // Calculate total items and total price of the order
+      let totalItems = 0;
+      let totalPrice = 0;
+      cartProductItems.forEach((item) => {
+        totalItems += item.product.quantity;
+        totalPrice +=
+          item.product.quantity *
+          parseFloat(item.product.price.replace(/[^0-9.-]+/g, ""));
+      });
+
+      if (cartProductItems.length > 0) {
+        return (
+          <Box>
+            <Paper sx={{ marginBottom: "12px" }}>
+              <Typography variant="h1" fontSize={"20px"}>
+                Thank you for your order.
+              </Typography>
+              <Typography variant="h2" fontSize={"16px"}>
+                Time: {orderTime}
+              </Typography>
+              <Typography variant="h2" fontSize={"16px"}>
+                Order Key: {keyword}
+              </Typography>
+            </Paper>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
                 <Paper>
-                  <ProductItemPurchased product={item.product} />
+                  <Box sx={{ textAlign: "center" }}>
+                    <Typography sx={{ fontSize: "18px" }}>
+                      Total Items: {totalItems}
+                    </Typography>
+                    <Typography sx={{ fontSize: "18px" }}>
+                      Total Price: {formatPrice(totalPrice)}
+                    </Typography>
+                  </Box>
                 </Paper>
               </Grid>
-            ))}
-          </Grid>
-        </Box>
-      );
+              {cartProductItems.map((item, index) => (
+                <Grid item key={index} xs={12}>
+                  <Paper>
+                    <ProductItemPurchased product={item.product} />{" "}
+                    {/* Display ProductItemPurchased here */}
+                  </Paper>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+        );
+      } else {
+        return <div>No products found for {keyword}</div>;
+      }
     } else {
       return <div>No order found for {keyword}</div>;
     }
   } else {
     return (
       <>
-        {orders.map((record) => (
+        {purchasedHistory.map((historyItem) => (
           <Card
-            key={record.key}
+            key={historyItem.orderName}
             sx={{
               padding: "5px 12px",
               margin: "12px",
@@ -139,7 +144,7 @@ function Purchase() {
                 justifyContent: "space-between",
               }}
             >
-              {record.time}
+              {historyItem.orderData.orderTime}
               <Button
                 sx={{
                   minWidth: "0",
@@ -151,16 +156,16 @@ function Purchase() {
                     bgcolor: "transparent",
                   },
                 }}
-                onClick={() => handleRemovePurchased(record.key)}
+                onClick={() => handleRemovePurchased(historyItem.orderName)}
               >
                 <ClearOutlinedIcon className={cx("remove")} />
               </Button>
             </Box>
             <Link
               className={cx("link-purchased")}
-              to={`/purchase?keyword=${record.key}`}
+              to={`/purchase?keyword=${historyItem.orderName}`}
             >
-              {record.key}
+              {historyItem.orderName}
             </Link>
           </Card>
         ))}

@@ -3,12 +3,16 @@ import { ProductDataType } from "../components/ProductItem/ProductItem";
 import { Book, getNewBooks } from "../services";
 import { useData } from "../hooks/useData";
 
-const storedBooks = localStorage.getItem("newBooks");
-
 let newBooks: Book[] = [];
-if (storedBooks) {
-  newBooks = JSON.parse(storedBooks);
-}
+
+(async () => {
+  try {
+    newBooks = await getNewBooks();
+  } catch (error) {
+    console.error("Error fetching new books:", error);
+  }
+})();
+
 const initState = newBooks;
 
 export type UseProductsContextType = { products: ProductDataType[] };
@@ -22,26 +26,10 @@ type ChildrenType = { children?: ReactElement | ReactElement[] };
 export const ProductsProvider = ({ children }: ChildrenType): ReactElement => {
   const [products] = useState<ProductDataType[]>(initState);
 
-  // useEffect(() => {
-  //   const fetchProducts = async (): Promise<ProductType[]> => {
-  //     const data = await fetch("http://localhost:5174/products")
-  //       .then((res) => {
-  //         return res.json();
-  //       })
-  //       .catch((err) => {
-  //         if (err instanceof Error) console.log(err.message);
-  //       });
-  //     return data;
-  //   };
-  //   fetchProducts().then((products) => setProducts(products));
-  // }, []);
-
-  const { dataResult, setDataResult } = useData();
+  const { setDataResult } = useData();
 
   useEffect(() => {
     const fetchNewBooks = async () => {
-      const newBooks: Book[] = await getNewBooks();
-
       const newBook: ProductDataType[] = newBooks.map((data, index) => ({
         index: index,
         _id: data._id,
@@ -57,7 +45,7 @@ export const ProductsProvider = ({ children }: ChildrenType): ReactElement => {
     };
 
     fetchNewBooks();
-  }, [dataResult]);
+  }, [setDataResult]);
 
   return (
     <ProductsContext.Provider value={{ products }}>

@@ -4,7 +4,7 @@ import { UseCartContextType } from "../context/CartProvider";
 
 const useCart = (): UseCartContextType => {
   const {
-    cart,
+    cartProductItems,
     dispatch,
     REDUCER_ACTIONS,
     totalItems,
@@ -13,7 +13,7 @@ const useCart = (): UseCartContextType => {
   } = useContext(CartContext);
 
   return {
-    cart,
+    cartProductItems,
     dispatch,
     REDUCER_ACTIONS,
     totalItems,

@@ -124,6 +124,7 @@ const cartReducer = (
       return { ...state };
   }
 };
+
 // Update cart
 const updateCart = (
   cart: ProductItemCartType[],
@@ -205,15 +206,23 @@ const useCartContext = () => {
     [state.cart]
   );
 
-  const cart = useMemo(
+  const cartProductItems = useMemo(
     () =>
       state.cart.map((item) => ({
-        ...item,
-        dispatch,
-        REDUCER_ACTIONS,
+        product: {
+          ...item.product,
+        },
       })),
     [state.cart, REDUCER_ACTIONS]
   );
+  console.log("🚀 ~ useCartContext ~ cartProductItems:", cartProductItems);
+
+  useEffect(() => {
+    console.log("Cart items product:");
+    cartProductItems.forEach((item) => {
+      console.log(item); // Log each item in cart
+    });
+  }, [cartProductItems]);
 
   const totalPrice = useMemo(() => {
     return new Intl.NumberFormat("en-US", {
@@ -227,14 +236,17 @@ const useCartContext = () => {
     );
   }, [state.cart]);
 
-  const totalUniqueItems = useMemo(() => cart.length, [cart]);
+  const totalUniqueItems = useMemo(
+    () => cartProductItems.length,
+    [cartProductItems]
+  );
 
   return {
     dispatch,
     REDUCER_ACTIONS,
     totalItems,
     totalPrice,
-    cart,
+    cartProductItems,
     totalUniqueItems,
   };
 };
@@ -246,7 +258,7 @@ const initCartContextState: UseCartContextType = {
   REDUCER_ACTIONS: REDUCER_ACTION_TYPE,
   totalItems: 0,
   totalPrice: "",
-  cart: [],
+  cartProductItems: [],
   totalUniqueItems: 0,
 };
 

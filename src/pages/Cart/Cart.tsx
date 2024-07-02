@@ -6,7 +6,14 @@ import useCart from "../../hooks/useCart";
 
 function Cart() {
   const [confirm, setConfirm] = useState<boolean>(false);
-  const { dispatch, REDUCER_ACTIONS, totalItems, totalPrice, cart } = useCart();
+
+  const {
+    dispatch,
+    REDUCER_ACTIONS,
+    totalItems,
+    totalPrice,
+    cartProductItems,
+  } = useCart();
   const navigate = useNavigate();
 
   const onSubmitOrder = () => {
@@ -19,11 +26,23 @@ function Cart() {
     const currentTime = Date.now();
     const orderName = `${currentTime}_purchased`;
     const orderData = {
-      cart,
+      cartProductItems,
       orderTime,
     };
 
-    localStorage.setItem(orderName, JSON.stringify(orderData));
+    // Lấy danh sách PurchasedHistory từ localStorage
+    const purchasedHistory: any[] = JSON.parse(
+      localStorage.getItem("PurchasedHistory") || "[]"
+    );
+
+    // Thêm orderData vào danh sách
+    purchasedHistory.push({
+      orderName,
+      orderData,
+    });
+
+    // Lưu lại danh sách PurchasedHistory vào localStorage
+    localStorage.setItem("PurchasedHistory", JSON.stringify(purchasedHistory));
 
     navigate(`/purchase?keyword=${encodeURIComponent(orderName)}`);
   };
@@ -32,7 +51,7 @@ function Cart() {
     <h2>Thank you for your order.</h2>
   ) : (
     <Grid container spacing={2}>
-      {cart.map((item) => (
+      {cartProductItems.map((item) => (
         <Grid item key={item.product._id} xs={12} sm={12} md={12} lg={12}>
           <Paper>
             <ProductItemCart
@@ -50,7 +69,7 @@ function Cart() {
         md={12}
         lg={12}
         sx={{
-          margin: cart.length === 0 ? "0 24px" : "0",
+          margin: cartProductItems.length === 0 ? "0 24px" : "0",
         }}
       >
         <Paper>

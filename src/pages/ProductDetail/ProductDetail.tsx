@@ -8,8 +8,9 @@ import { CartContext } from "../../context/CartProvider";
 function ProductDetail() {
   const location = useLocation();
   const data: ProductDataType = location.state;
-  const { dispatch, REDUCER_ACTIONS, cart } = useContext(CartContext);
-  const inCart = cart.some((item) => item.product._id === data._id);
+  const { dispatch, REDUCER_ACTIONS, cartProductItems } =
+    useContext(CartContext);
+  const inCart = cartProductItems.some((item) => item.product._id === data._id);
   console.log("dataDetail ID", data._id);
 
   return (
