@@ -8,10 +8,12 @@ import ProductItemPurchased, {
   ProductItemPurchasedType,
 } from "../../components/ProductItemPurchased/ProductItemPurchased";
 import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
+import httpRequest from "../../utils/httpRequest";
 
 const cx = classNames.bind(styles);
 
 interface PurchasedHistoryItem {
+  _id: string;
   orderName: string;
   orderData: {
     cartProductItems: ProductItemPurchasedType[];
@@ -28,37 +30,44 @@ function Purchase() {
   >([]);
 
   useEffect(() => {
-    const fetchPurchasedHistory = () => {
-      let storedPurchasedHistory: PurchasedHistoryItem[] = JSON.parse(
-        localStorage.getItem("PurchasedHistory") || "[]"
-      );
-      storedPurchasedHistory = storedPurchasedHistory.sort((a, b) => {
-        return (
-          new Date(b.orderData.orderTime).getTime() -
-          new Date(a.orderData.orderTime).getTime()
+    const fetchPurchasedHistory = async () => {
+      try {
+        const response = await httpRequest.get(
+          "/purchased/purchased-history-items"
         );
-      });
-      setPurchasedHistory(storedPurchasedHistory);
+
+        // Check if response data contains purchasedHistoryItems array
+        if (!Array.isArray(response.data.purchasedHistoryItems)) {
+          throw new Error("Response data is not in the expected format");
+        }
+
+        const sortedHistory = response.data.purchasedHistoryItems.sort(
+          (a: PurchasedHistoryItem, b: PurchasedHistoryItem) => {
+            return (
+              new Date(b.orderData.orderTime).getTime() -
+              new Date(a.orderData.orderTime).getTime()
+            );
+          }
+        );
+
+        setPurchasedHistory(sortedHistory);
+      } catch (error) {
+        console.error("Error fetching purchased history:", error);
+      }
     };
 
     fetchPurchasedHistory();
   }, []);
 
-  const handleRemovePurchased = (key: string) => {
-    // console.log("Removing order with key:", key);
-    // localStorage.removeItem(key);
-    setPurchasedHistory((prevHistory) =>
-      prevHistory.filter((historyItem) => historyItem.orderName !== key)
-    );
-
-    // Cập nhật lại localStorage sau khi xoá
-    const updatedPurchasedHistory = purchasedHistory.filter(
-      (historyItem) => historyItem.orderName !== key
-    );
-    localStorage.setItem(
-      "PurchasedHistory",
-      JSON.stringify(updatedPurchasedHistory)
-    );
+  const handleRemovePurchased = async (_id: string) => {
+    try {
+      await httpRequest.delete(`/purchased/purchased-history-item/${_id}`);
+      setPurchasedHistory((prevHistory) =>
+        prevHistory.filter((historyItem) => historyItem._id !== _id)
+      );
+    } catch (error) {
+      console.error("Error deleting purchased history item:", error);
+    }
   };
 
   if (keyword) {
@@ -156,7 +165,7 @@ function Purchase() {
                     bgcolor: "transparent",
                   },
                 }}
-                onClick={() => handleRemovePurchased(historyItem.orderName)}
+                onClick={() => handleRemovePurchased(historyItem._id)}
               >
                 <ClearOutlinedIcon className={cx("remove")} />
               </Button>

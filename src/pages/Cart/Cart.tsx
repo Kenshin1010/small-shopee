@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ProductItemCart from "../../components/ProductItemCart/ProductItemCart";
 import useCart from "../../hooks/useCart";
+import httpRequest from "../../utils/httpRequest";
 
 function Cart() {
   const [confirm, setConfirm] = useState<boolean>(false);
@@ -16,35 +17,32 @@ function Cart() {
   } = useCart();
   const navigate = useNavigate();
 
-  const onSubmitOrder = () => {
+  const onSubmitOrder = async () => {
     dispatch({ type: REDUCER_ACTIONS.SUBMIT });
     setConfirm(true);
+
     const currentDate = new Date();
     const orderTime = currentDate;
-    console.log("orderTime: ", orderTime);
-
     const currentTime = Date.now();
     const orderName = `${currentTime}_purchased`;
+
     const orderData = {
       cartProductItems,
       orderTime,
     };
 
-    // Lấy danh sách PurchasedHistory từ localStorage
-    const purchasedHistory: any[] = JSON.parse(
-      localStorage.getItem("PurchasedHistory") || "[]"
-    );
+    try {
+      const response = await httpRequest.post(
+        "/purchased/create-purchased-history-item",
+        { orderName, orderData }
+      );
+      console.log("🚀 ~ onSubmitOrder ~ response.data._id:", response.data._id);
 
-    // Thêm orderData vào danh sách
-    purchasedHistory.push({
-      orderName,
-      orderData,
-    });
-
-    // Lưu lại danh sách PurchasedHistory vào localStorage
-    localStorage.setItem("PurchasedHistory", JSON.stringify(purchasedHistory));
-
-    navigate(`/purchase?keyword=${encodeURIComponent(orderName)}`);
+      // const orderName = response.data._id;
+      navigate(`/purchase?keyword=${encodeURIComponent(orderName)}`);
+    } catch (error) {
+      console.error("Error creating purchased history item:", error);
+    }
   };
 
   const pageContent = confirm ? (
