@@ -139,7 +139,7 @@ function Purchase() {
           <Card
             key={historyItem.orderName}
             sx={{
-              padding: "5px 12px",
+              padding: "5px 10px 5px 12px",
               margin: "12px",
               lineHeight: "2.2rem",
             }}
@@ -159,6 +159,8 @@ function Purchase() {
                   minWidth: "0",
                   borderRadius: "0",
                   bgcolor: "transparent",
+                  padding: "0",
+                  paddingLeft: "12px",
                   "&:hover": {
                     minWidth: "0",
                     borderRadius: "0",
