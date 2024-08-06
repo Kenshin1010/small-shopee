@@ -4,8 +4,8 @@ import {
   ReactNode,
   SetStateAction,
   useState,
-} from "react";
-import { ProductDataType } from "../components/ProductItem/ProductItem";
+} from 'react';
+import { ProductDataType } from '../components/ProductItem/ProductItem';
 
 export interface Data {
   searchResult: ProductDataType[];
@@ -19,9 +19,7 @@ export const DataContext = createContext<Data | undefined>(undefined);
 // type ChildrenType = { children?: ReactElement | ReactElement[] };
 // export const DataProvider = ({ children }: ChildrenType): ReactElement => {
 
-export const DataProvider: React.FC<{ children: ReactNode }> = ({
-  children,
-}) => {
+const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [searchResult, setSearchResult] = useState<ProductDataType[]>([]);
   const [dataResult, setDataResult] = useState<ProductDataType[]>([]);
 
@@ -34,3 +32,5 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
 };
+
+export default DataProvider;
