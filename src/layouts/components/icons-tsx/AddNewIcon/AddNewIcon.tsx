@@ -1,6 +1,6 @@
-import PostAddIcon from "@mui/icons-material/PostAdd";
-import { IconButton, Tooltip } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import PostAddIcon from '@mui/icons-material/PostAdd';
+import { IconButton, Tooltip } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 function AddNewIcon() {
   const navigate = useNavigate();
@@ -11,9 +11,9 @@ function AddNewIcon() {
           onClick={() => {
             navigate(`/addnew`);
           }}
-          sx={{ margin: "0 48px" }}
+          sx={{ margin: '0 48px' }}
         >
-          <PostAddIcon sx={{ fontSize: "32px" }} />
+          <PostAddIcon sx={{ fontSize: '32px' }} />
         </IconButton>
       </Tooltip>
     </div>
