@@ -28,12 +28,12 @@
     &::placeholder {
       font-weight: 300;
       color: var(--input-color);
-      font-family: "KFOmCnqEu92Fr1Mu4mxKKTU1Kg", var(--font-family);
+      font-family: 'KFOmCnqEu92Fr1Mu4mxKKTU1Kg', var(--font-family);
     }
   }
 
   &::after {
-    content: "";
+    content: '';
     position: absolute;
     width: 1px;
     height: calc(var(--search-height) - var(--search-top-spacer) * 2);

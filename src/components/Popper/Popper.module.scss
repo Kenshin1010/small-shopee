@@ -1,0 +1,15 @@
+.wrapper {
+  position: absolute;
+  width: 100%;
+  min-width: 223px;
+  max-height: min(-156px + 100vh, 734px);
+  background-color: rgb(255, 255, 255);
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 2px 12px;
+  overscroll-behavior-y: contain;
+  overflow-y: overlay;
+  transform-style: preserve-3d;
+  perspective-origin: right top;
+  top: var(--default-layout-height);
+  position: fixed;
+  z-index: 99;
+}

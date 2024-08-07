@@ -1,25 +1,33 @@
-import classNames from "classnames/bind";
-import styles from "./SearchBar.module.scss";
+import classNames from 'classnames/bind';
+import styles from './SearchBar.module.scss';
 
-import HeadlessTippy from "@tippyjs/react/headless";
-import { ChangeEvent, MouseEvent, useEffect, useRef, useState } from "react";
-import useDebounce from "../../../hooks/useDebounce";
+import HeadlessTippy from '@tippyjs/react/headless';
+import { ChangeEvent, MouseEvent, useEffect, useRef, useState } from 'react';
+import useDebounce from '../../../hooks/useDebounce';
 
-import SearchIcon from "../icons-tsx/SearchIcon";
+import SearchIcon from '../icons-tsx/SearchIcon';
 
-import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
-import RotateLeftOutlinedIcon from "@mui/icons-material/RotateLeftOutlined";
-import { Button, Container, Grid, Paper, Tooltip } from "@mui/material";
-import { ProductDataType } from "../../../components/ProductItem/ProductItem";
-import { Book, getNewBooks, searchBooks } from "../../../services";
+import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined';
+import RotateLeftOutlinedIcon from '@mui/icons-material/RotateLeftOutlined';
+import {
+  Button,
+  Container,
+  Grid,
+  Paper,
+  Tooltip,
+  Typography,
+} from '@mui/material';
+import { ProductDataType } from '../../../components/ProductItem/ProductItem';
+import { Book, getNewBooks, searchBooks } from '../../../services';
 
-import { useNavigate } from "react-router-dom";
-import { useData } from "../../../hooks/useData";
+import { useNavigate } from 'react-router-dom';
+import { useData } from '../../../hooks/useData';
+import Wrapper from '../../../components/Popper/Wrapper';
 
 const cx = classNames.bind(styles);
 
 function SearchBar() {
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState('');
   // const [dataResult, setDataResult] = useState<ProductDataType[]>([]);
   // const [searchResult, setSearchResult] = useState<ProductDataType[]>([]);
   const {
@@ -90,7 +98,7 @@ function SearchBar() {
   }, [debouncedValue]);
 
   const handleClear = () => {
-    setSearchValue("");
+    setSearchValue('');
     setSearchResult([]);
     inputRef.current?.focus();
     navigate(`/search`);
@@ -108,7 +116,7 @@ function SearchBar() {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const searchValue = e.target.value;
-    if (!searchValue.startsWith(" ")) {
+    if (!searchValue.startsWith(' ')) {
       setSearchValue(searchValue);
     }
   };
@@ -126,7 +134,7 @@ function SearchBar() {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       e.preventDefault(); // Ensure the default form submission is prevented
       setShowResult(false);
       const trimmedValue = searchValue.trim();
@@ -152,45 +160,53 @@ function SearchBar() {
               md={6}
               lg={6}
               xl={6}
-              className={cx("search-results")}
+              className={cx('search-results')}
               tabIndex={-1}
               {...attrs}
             >
-              <h4 className={cx("search-title")}>Books</h4>
-              <Paper sx={{ width: "100%" }}>
-                {searchResult.map((result: ProductDataType) => (
-                  <Button
-                    className={cx("search-title-book")}
-                    key={result._id}
-                    sx={{
-                      width: "100%",
-                      fontSize: "14px",
-                      minHeight: "14px",
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      padding: "10px",
-                      cursor: "pointer",
-                      bgcolor: "rgba(22, 24, 35, 0.03)",
-                      "&:hover": {
-                        backgroundColor: "rgba(22, 24, 35, 0.12)",
-                      },
-                    }}
-                    onClick={(e: MouseEvent<HTMLButtonElement>) => {
-                      e.preventDefault();
-                      setShowResult(false);
-                      navigate(
-                        `/detail?keyword=${encodeURIComponent(
-                          result.title.trim()
-                        )}`,
-                        { state: { ...result } }
-                      );
-                    }}
-                  >
-                    {result.title}
-                  </Button>
-                ))}
-              </Paper>
+              <Wrapper>
+                <h4 className={cx('search-title')}>Books</h4>
+                <Paper sx={{ width: '100%' }}>
+                  {searchResult.map((result: ProductDataType) => (
+                    <Button
+                      className={cx('search-title-book')}
+                      key={result._id}
+                      sx={{
+                        width: '100%',
+                        minHeight: '14px',
+                        borderRadius: '0',
+                        cursor: 'pointer',
+                        bgcolor: 'rgba(22, 24, 35, 0.03)',
+                        '&:hover': {
+                          backgroundColor: 'rgba(22, 24, 35, 0.12)',
+                        },
+                      }}
+                      onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                        e.preventDefault();
+                        setShowResult(false);
+                        navigate(
+                          `/detail?keyword=${encodeURIComponent(
+                            result.title.trim()
+                          )}`,
+                          { state: { ...result } }
+                        );
+                      }}
+                    >
+                      <Typography
+                      // sx={{
+                      //   fontSize: '14px',
+                      //   whiteSpace: 'nowrap',
+                      //   overflow: 'hidden',
+                      //   textOverflow: 'ellipsis',
+                      //   padding: '10px',
+                      // }}
+                      >
+                        {result.title}
+                      </Typography>
+                    </Button>
+                  ))}
+                </Paper>
+              </Wrapper>
             </Grid>
           )}
           onClickOutside={handleHideResult}
@@ -202,7 +218,7 @@ function SearchBar() {
             md={6}
             lg={6}
             xl={6}
-            className={cx("search")}
+            className={cx('search')}
           >
             <input
               ref={inputRef}
@@ -216,29 +232,29 @@ function SearchBar() {
             />
             {!!searchValue && !loading && (
               <ClearOutlinedIcon
-                className={cx("clear")}
+                className={cx('clear')}
                 onClick={() => {
                   handleClear();
                 }}
               />
             )}
-            {loading && <RotateLeftOutlinedIcon className={cx("loading")} />}
-            <Tooltip arrow disableFocusListener title={"Search"}>
+            {loading && <RotateLeftOutlinedIcon className={cx('loading')} />}
+            <Tooltip arrow disableFocusListener title={'Search'}>
               <Button
-                className={cx("search-btn")}
+                className={cx('search-btn')}
                 onMouseDown={handleSubmit}
                 sx={{
-                  minWidth: "none",
+                  minWidth: 'none',
 
-                  "&.MuiButtonBase-root.MuiButton-root": {
-                    color: "rgba(22, 24, 35, 0.34)",
-                    bgcolor: "rgba(22, 24, 35, 0.03)",
-                    borderRadius: "0",
+                  '&.MuiButtonBase-root.MuiButton-root': {
+                    color: 'rgba(22, 24, 35, 0.34)',
+                    bgcolor: 'rgba(22, 24, 35, 0.03)',
+                    borderRadius: '0',
                   },
-                  "&.MuiButtonBase-root.MuiButton-root:hover": {
-                    color: "#212121",
-                    bgcolor: "rgba(22, 24, 35, 0.12)",
-                    borderRadius: "0",
+                  '&.MuiButtonBase-root.MuiButton-root:hover': {
+                    color: '#212121',
+                    bgcolor: 'rgba(22, 24, 35, 0.12)',
+                    borderRadius: '0',
                   },
                 }}
               >

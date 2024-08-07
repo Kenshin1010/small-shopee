@@ -1,4 +1,4 @@
-@import "normalize.css";
+@import 'normalize.css';
 
 :root {
   --primary: #ee4d2d;
@@ -21,7 +21,7 @@
     Microsoft JhengHei UI, Microsoft JhengHei, sans-serif;
 
   // Default layout
-  --default-layout-header-height: 60px;
+  --default-layout-height: 60px;
   --default-layout-width: 1402px;
   --default-layout-horizontal-spacer-left: 16px;
   --default-layout-horizontal-spacer-right: 24px;
