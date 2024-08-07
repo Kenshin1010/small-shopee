@@ -11,7 +11,7 @@ function AddNewIcon() {
           onClick={() => {
             navigate(`/addnew`);
           }}
-          sx={{ margin: '0 48px' }}
+          sx={{ margin: '0 48px', cursor: 'pointer' }}
         >
           <PostAddIcon sx={{ fontSize: '32px' }} />
         </IconButton>

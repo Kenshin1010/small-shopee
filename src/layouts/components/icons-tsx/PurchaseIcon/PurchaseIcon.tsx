@@ -1,6 +1,6 @@
-import ReceiptIcon from "@mui/icons-material/Receipt";
-import { IconButton, Tooltip } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import ReceiptIcon from '@mui/icons-material/Receipt';
+import { IconButton, Tooltip } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 function PurchaseIcon() {
   const navigate = useNavigate();
@@ -11,9 +11,9 @@ function PurchaseIcon() {
           onClick={() => {
             navigate(`/purchase`);
           }}
-          sx={{ marginRight: "48px", cursor: "pointer" }}
+          sx={{ marginRight: '48px', cursor: 'pointer' }}
         >
-          <ReceiptIcon sx={{ fontSize: "32px" }} />
+          <ReceiptIcon sx={{ fontSize: '32px' }} />
         </IconButton>
       </Tooltip>
     </div>

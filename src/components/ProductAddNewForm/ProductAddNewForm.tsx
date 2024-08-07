@@ -1,16 +1,16 @@
-import { Button, Grid, Paper } from "@mui/material";
-import { AxiosResponse } from "axios";
-import classNames from "classnames/bind";
-import { useContext, useEffect, useRef, useState } from "react";
-import { useData } from "../../hooks/useData";
-import useDebounce from "../../hooks/useDebounce";
-import httpRequest from "../../utils/httpRequest";
-import { ProductDataType } from "../ProductItem/ProductItem";
-import ProductItemAddNew from "../ProductItemAddNew/ProductItemAddNew";
-import styles from "./ProductAddNewForm.module.scss";
-import { useLocation } from "react-router-dom";
-import { Book, getNewBooks } from "../../services";
-import CartContext, { REDUCER_ACTION_TYPE } from "../../context/CartProvider";
+import { Button, Grid, Paper } from '@mui/material';
+import { AxiosResponse } from 'axios';
+import classNames from 'classnames/bind';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { useData } from '../../hooks/useData';
+import useDebounce from '../../hooks/useDebounce';
+import httpRequest from '../../utils/httpRequest';
+import { ProductDataType } from '../ProductItem/ProductItem';
+import ProductItemAddNew from '../ProductItemAddNew/ProductItemAddNew';
+import styles from './ProductAddNewForm.module.scss';
+import { useLocation } from 'react-router-dom';
+import { Book, getNewBooks } from '../../services';
+import CartContext, { REDUCER_ACTION_TYPE } from '../../context/CartProvider';
 
 const cx = classNames.bind(styles);
 
@@ -28,25 +28,25 @@ type Product = {
 
 export const formatPrice = (price: string | number | undefined) => {
   // Check if price is null, undefined, or empty string
-  if (price === null || price === undefined || price === "") {
-    return "Price not available";
+  if (price === null || price === undefined || price === '') {
+    return 'Price not available';
   }
 
   // Convert value to a numeric type if it's a string
   const numericPrice =
-    typeof price === "string"
-      ? parseFloat(price.replace(/[^0-9.-]+/g, ""))
+    typeof price === 'string'
+      ? parseFloat(price.replace(/[^0-9.-]+/g, ''))
       : price;
 
   // Check if the numericPrice is valid
   if (isNaN(numericPrice)) {
-    throw new Error("Invalid price format");
+    throw new Error('Invalid price format');
   }
 
   // Use Intl.NumberFormat to format the currency value
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
   }).format(numericPrice);
 };
 
@@ -55,11 +55,11 @@ function ProductAddNewForm() {
   const { dispatch } = useContext(CartContext);
   const location = useLocation();
 
-  const [title, setTitle] = useState("");
-  const [subtitle, setSubtitle] = useState("");
-  const [price, setPrice] = useState("");
-  const [isbn13, setIsbn13] = useState<string | "">("");
-  const [image, setImage] = useState("");
+  const [title, setTitle] = useState('');
+  const [subtitle, setSubtitle] = useState('');
+  const [price, setPrice] = useState('');
+  const [isbn13, setIsbn13] = useState<string | ''>('');
+  const [image, setImage] = useState('');
   const [products, setProducts] = useState<Product[]>([]);
 
   const [titleError, setTitleError] = useState(false);
@@ -96,15 +96,15 @@ function ProductAddNewForm() {
   }, [setDataResult]);
 
   useEffect(() => {
-    const priceAsString = price.replace(/[^0-9.-]+/g, "");
+    const priceAsString = price.replace(/[^0-9.-]+/g, '');
     const parsedIsbn13 = parseInt(isbn13.trim(), 10);
     setIsFormValid(
-      title.trim() !== "" &&
-        priceAsString.trim() !== "" &&
+      title.trim() !== '' &&
+        priceAsString.trim() !== '' &&
         !isNaN(parseFloat(priceAsString.trim())) &&
-        isbn13.trim() !== "" &&
+        isbn13.trim() !== '' &&
         !isNaN(parsedIsbn13) &&
-        image !== ""
+        image !== ''
     );
   }, [title, subtitle, price, isbn13, image]);
 
@@ -117,7 +117,7 @@ function ProductAddNewForm() {
         return false; // ISBN13 does not exist
       }
 
-      console.error("Error checking ISBN:", error);
+      console.error('Error checking ISBN:', error);
       return false; // Handle other errors as ISBN13 does not exist
     }
   };
@@ -130,7 +130,7 @@ function ProductAddNewForm() {
     if (!hasError) {
       if (await isISBN13Exists(debouncedIsbn13)) {
         setIsbn13ExistsError(true);
-        alert("ISBN13 already exists."); // Set error if ISBN13 already exists
+        alert('ISBN13 already exists.'); // Set error if ISBN13 already exists
         return;
       }
 
@@ -138,7 +138,7 @@ function ProductAddNewForm() {
 
       const newProduct = {
         title,
-        subtitle: subtitle || "",
+        subtitle: subtitle || '',
         price: formatPrice(price),
         isbn13: parsedIsbn13,
         image,
@@ -147,26 +147,26 @@ function ProductAddNewForm() {
 
       try {
         const response: AxiosResponse<any> = await httpRequest.post(
-          "/addnew",
+          '/addnew',
           newProduct
         );
         setDataResult?.((prevData) => [...prevData, response.data]);
-        console.log("Server response:", response.data);
+        console.log('Server response:', response.data);
 
         setProducts([...products, response.data]);
-        setTitle("");
-        setSubtitle("");
-        setPrice("");
-        setIsbn13("");
-        setImage("");
+        setTitle('');
+        setSubtitle('');
+        setPrice('');
+        setIsbn13('');
+        setImage('');
 
         if (inputFileRef.current) {
-          inputFileRef.current.value = "";
+          inputFileRef.current.value = '';
         }
 
         titleRef.current?.focus();
       } catch (error) {
-        console.error("Error adding new product:", error);
+        console.error('Error adding new product:', error);
       }
 
       // if (user) {
@@ -194,7 +194,7 @@ function ProductAddNewForm() {
       //   }
       // }
     } else {
-      alert("Please enter a valid title and price.");
+      alert('Please enter a valid title and price.');
     }
   };
 
@@ -216,13 +216,13 @@ function ProductAddNewForm() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setImage(value);
-    setImageError(value.trim() === "");
+    setImageError(value.trim() === '');
   };
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setTitle(value);
-    setTitleError(value.trim() === "");
+    setTitleError(value.trim() === '');
   };
 
   const handleSubtitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -234,14 +234,14 @@ function ProductAddNewForm() {
     const value = e.target.value;
     setPrice(value);
 
-    if (value.trim() === "") {
+    if (value.trim() === '') {
       setPriceError(true);
       return;
     }
 
-    const priceAsString = value.replace(/[^0-9.-]+/g, "");
+    const priceAsString = value.replace(/[^0-9.-]+/g, '');
     const priceAsNumber = parseFloat(priceAsString);
-    setPriceError(isNaN(priceAsNumber) || priceAsString.trim() === "");
+    setPriceError(isNaN(priceAsNumber) || priceAsString.trim() === '');
   };
 
   const handleIsbn13Change = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -249,7 +249,7 @@ function ProductAddNewForm() {
     setIsbn13(value);
 
     const parsedValue = parseInt(value, 10);
-    setIsbn13Error(isNaN(parsedValue) || value.trim() === "");
+    setIsbn13Error(isNaN(parsedValue) || value.trim() === '');
   };
 
   const handleRemoveProductNew = async (productId: string | undefined) => {
@@ -257,8 +257,8 @@ function ProductAddNewForm() {
       const response: AxiosResponse<any> = await httpRequest.delete(
         `/book/${productId}`
       );
-      console.log("Product Deleted successfully has ID: ", productId);
-      console.log("Response: ", response);
+      console.log('Product Deleted successfully has ID: ', productId);
+      console.log('Response: ', response);
 
       setDataResult?.((prevData) =>
         prevData.filter((item) => item._id !== productId)
@@ -269,16 +269,16 @@ function ProductAddNewForm() {
         payload: {
           product: {
             _id: productId,
-            title: "",
-            price: "",
-            image: "",
+            title: '',
+            price: '',
+            image: '',
             quantity: 0,
             isbn13: 0,
           },
         },
       });
     } catch (error) {
-      console.error("Error deleting product:", error);
+      console.error('Error deleting product:', error);
     }
   };
 
@@ -286,7 +286,7 @@ function ProductAddNewForm() {
     try {
       const parsedIsbn13 = parseInt(isbn13, 10); // Parse isbn13 to number
       if (isNaN(parsedIsbn13)) {
-        console.error("Invalid ISBN13:", isbn13);
+        console.error('Invalid ISBN13:', isbn13);
 
         return;
       }
@@ -315,7 +315,7 @@ function ProductAddNewForm() {
         if (await isISBN13Exists(debouncedIsbn13.toString())) {
           // Ensure isISBN13Exists expects a string
           setIsbn13ExistsError(true);
-          alert("ISBN13 already exists."); // Set error if ISBN13 already exists
+          alert('ISBN13 already exists.'); // Set error if ISBN13 already exists
           return;
         }
       }
@@ -327,21 +327,21 @@ function ProductAddNewForm() {
         productToUpdate
       );
 
-      console.log("Product Updated successfully has ID: ", response.data._id);
+      console.log('Product Updated successfully has ID: ', response.data._id);
 
       // Provide UI feedback
-      alert("Product updated successfully!");
+      alert('Product updated successfully!');
 
       setDataResult?.((prevData) =>
         prevData.map((item) => (item._id === productId ? response.data : item))
       );
 
       // Optionally reset form fields
-      setTitle("");
-      setSubtitle("");
-      setPrice("");
-      setIsbn13("");
-      setImage("");
+      setTitle('');
+      setSubtitle('');
+      setPrice('');
+      setIsbn13('');
+      setImage('');
 
       const updatedProduct = {
         ...originalProduct,
@@ -357,7 +357,7 @@ function ProductAddNewForm() {
         },
       });
     } catch (error) {
-      console.error("Error updating product:", error);
+      console.error('Error updating product:', error);
     }
   };
 
@@ -368,14 +368,14 @@ function ProductAddNewForm() {
 
     if (productToEdit) {
       setTitle(productToEdit.title);
-      setSubtitle(productToEdit.subtitle || "");
+      setSubtitle(productToEdit.subtitle || '');
       setPrice(productToEdit.price);
-      setIsbn13((productToEdit.isbn13 || "").toString());
+      setIsbn13((productToEdit.isbn13 || '').toString());
       setImage(productToEdit.image);
 
       // Optionally, scroll to the top of the form or focus on the title input
       if (titleRef.current) {
-        titleRef.current.scrollIntoView({ behavior: "smooth" });
+        titleRef.current.scrollIntoView({ behavior: 'smooth' });
         titleRef.current.focus();
       }
     }
@@ -384,8 +384,8 @@ function ProductAddNewForm() {
   const handleButtonClick = () => {
     const { pathname, search } = location;
 
-    if (pathname === "/addnew" && search.includes("?edit=")) {
-      handleUpdateProductNew(search.replace("?edit=", ""));
+    if (pathname === '/addnew' && search.includes('?edit=')) {
+      handleUpdateProductNew(search.replace('?edit=', ''));
     } else {
       handleSubmit();
     }
@@ -394,10 +394,10 @@ function ProductAddNewForm() {
   const getButtonText = () => {
     const { pathname, search } = location;
 
-    if (pathname === "/addnew" && search.includes("?edit=")) {
-      return "Save";
+    if (pathname === '/addnew' && search.includes('?edit=')) {
+      return 'Save';
     } else {
-      return "Add";
+      return 'Add';
     }
   };
 
@@ -406,42 +406,42 @@ function ProductAddNewForm() {
   }, [location]);
 
   return (
-    <div className={cx("wrapper")}>
-      <Grid container sx={{ gap: "24px" }}>
+    <div className={cx('wrapper')}>
+      <Grid container sx={{ gap: '24px' }}>
         <Grid item xs={12} sm={10} md={6} lg={6}>
           <input
-            className={cx("input-form")}
+            className={cx('input-form')}
             ref={titleRef}
             value={title}
             placeholder="Enter title ..."
             onChange={handleTitleChange}
-            style={{ borderColor: titleError ? "red" : "initial" }}
+            style={{ borderColor: titleError ? 'red' : 'initial' }}
           />
           {titleError && <div style={errorStyle}>Title is required</div>}
           <br />
           <input
-            className={cx("input-form")}
+            className={cx('input-form')}
             value={subtitle}
             placeholder="Enter subtitle ..."
             onChange={handleSubtitleChange}
-            style={{ borderColor: "initial" }}
+            style={{ borderColor: 'initial' }}
           />
           <br />
           <input
-            className={cx("input-form")}
+            className={cx('input-form')}
             value={price}
             placeholder="Enter price $..."
             onChange={handlePriceChange}
-            style={{ borderColor: priceError ? "red" : "initial" }}
+            style={{ borderColor: priceError ? 'red' : 'initial' }}
           />
           {priceError && <div style={errorStyle}>Price is invalid</div>}
           <br />
           <input
-            className={cx("input-form")}
+            className={cx('input-form')}
             value={isbn13}
             placeholder="Enter isbn13 ..."
             onChange={handleIsbn13Change}
-            style={{ borderColor: isbn13Error ? "red" : "initial" }}
+            style={{ borderColor: isbn13Error ? 'red' : 'initial' }}
           />
           {isbn13Error && <div style={errorStyle}>ISBN13 is invalid</div>}
           {isbn13ExistsError && (
@@ -449,11 +449,11 @@ function ProductAddNewForm() {
           )}
           <br />
           <input
-            className={cx("input-form")}
+            className={cx('input-form')}
             value={image}
             placeholder="Enter image ..."
             onChange={handleImageChange}
-            style={{ borderColor: imageError ? "red" : "initial" }}
+            style={{ borderColor: imageError ? 'red' : 'initial' }}
           />
           {imageError && <div style={errorStyle}>IMAGE is invalid</div>}
           <br />
@@ -471,27 +471,27 @@ function ProductAddNewForm() {
             onClick={handleButtonClick}
             disabled={!isFormValid}
             sx={{
-              width: "100%",
-              fontSize: "16px",
-              bgcolor: "#1a1a1a",
-              color: "#fff",
-              "&:hover": {
-                bgcolor: "rgba(22, 24, 35, 0.06)",
-                color: "#1a1a1a",
+              width: '90%',
+              fontSize: '16px',
+              bgcolor: '#1a1a1a',
+              color: '#fff',
+              '&:hover': {
+                bgcolor: 'rgba(22, 24, 35, 0.06)',
+                color: '#1a1a1a',
               },
-              "&:disabled": {
+              '&:disabled': {
                 opacity: 0.7,
-                color: "#fff",
+                color: '#fff',
               },
-              lineHeight: "2.2rem",
-              margin: "12px",
+              lineHeight: '2.2rem',
+              margin: '12px',
             }}
           >
             {getButtonText()}
           </Button>
         </Grid>
       </Grid>
-      <Grid container sx={{ gap: "12px", margin: "12px" }}>
+      <Grid container sx={{ gap: '12px', margin: '12px' }}>
         {dataResult.map((product: ProductDataType) => (
           <Grid item key={product._id} xs={12} sm={4} md={2} lg={2}>
             <Paper>
@@ -510,8 +510,8 @@ function ProductAddNewForm() {
 
 // styles
 const errorStyle = {
-  marginLeft: "12px",
-  color: "red",
+  marginLeft: '12px',
+  color: 'red',
 };
 
 export default ProductAddNewForm;
