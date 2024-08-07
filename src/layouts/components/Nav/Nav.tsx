@@ -10,7 +10,7 @@ function Nav() {
   return (
     <header className={cx('wrapper')}>
       <Logo />
-      <Box sx={{ marginRight: '12px' }}>
+      <Box sx={{ marginRight: '24px' }}>
         <AccountMenu />
       </Box>
     </header>
