@@ -11,6 +11,7 @@ import * as React from 'react';
 import goGameImage from '../../../assets/images/gogame.jpeg';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import ReceiptIcon from '@mui/icons-material/Receipt';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 // import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import { useNavigate } from 'react-router-dom';
@@ -26,7 +27,30 @@ export default function AccountMenu() {
     setAnchorEl(null);
   };
 
-  const userLogin = false;
+  const [userLogin, setUserLogin] = React.useState(() => {
+    // Read the value from localStorage when the component mounts
+    const storedLoginStatus = localStorage.getItem('userLogin');
+    return storedLoginStatus === 'true'; // Convert the value from string to boolean
+  });
+
+  const handleLogin = () => {
+    setUserLogin(true);
+  };
+  const handleLogout = () => {
+    setUserLogin(false);
+  };
+
+  React.useEffect(() => {
+    // Save the userLogin state to localStorage whenever it changes
+    localStorage.setItem('userLogin', userLogin.toString());
+    if (userLogin) {
+      console.log('User has logged in');
+      // Perform actions when the user logs in
+    } else {
+      console.log('User has logged out');
+      // Perform actions when the user logs out
+    }
+  }, [userLogin]); // Dependency array
 
   const navigate = useNavigate();
   return (
@@ -133,7 +157,17 @@ export default function AccountMenu() {
               </ListItemIcon>
               Settings
             </MenuItem>
-            <MenuItem onClick={handleClose}>
+            <MenuItem
+              onClick={() => {
+                navigate(`/change-password`);
+              }}
+            >
+              <ListItemIcon>
+                <ManageAccountsIcon />
+              </ListItemIcon>
+              Change password
+            </MenuItem>
+            <MenuItem onClick={handleLogout}>
               <ListItemIcon>
                 <Logout />
               </ListItemIcon>
@@ -144,9 +178,7 @@ export default function AccountMenu() {
       ) : (
         <Tooltip disableFocusListener arrow title="Login">
           <Button
-            onClick={() => {
-              navigate(`/login`);
-            }}
+            onClick={handleLogin}
             sx={{
               bgcolor: '#101010',
               color: '#fff',
