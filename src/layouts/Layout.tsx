@@ -1,5 +1,5 @@
-type LayoutProps = {
-  children: React.ComponentType;
+export type LayoutProps = {
+  children: React.ReactElement;
 };
 
 function Layout({ children }: LayoutProps) {
