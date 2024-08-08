@@ -407,7 +407,7 @@ function ProductAddNewForm() {
 
   return (
     <div className={cx('wrapper')}>
-      <Grid container sx={{ gap: '24px' }}>
+      <Grid container sx={{ gap: '24px' }} className={cx('add-form')}>
         <Grid item xs={12} sm={10} md={6} lg={6}>
           <input
             className={cx('input-form')}

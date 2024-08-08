@@ -1,15 +1,19 @@
-import config from "../config";
+import config from '../config';
+import Layout from '../layouts/Layout';
 
 // Layouts
-import NavOnly from "../layouts/NavOnly/NavOnly";
+import NavOnly from '../layouts/NavOnly/NavOnly';
 
 // Pages
-import AddNewProduct from "../pages/AddNewProduct/AddNewProduct";
-import Cart from "../pages/Cart/Cart";
-import Home from "../pages/Home/Home";
-import ProductDetail from "../pages/ProductDetail/ProductDetail";
-import Purchase from "../pages/Purchase/Purchase";
-import Search from "../pages/Search/Search";
+import AddNewProduct from '../pages/AddNewProduct/AddNewProduct';
+import Cart from '../pages/Cart/Cart';
+import Home from '../pages/Home/Home';
+import Login from '../pages/Login/Login';
+import ProductDetail from '../pages/ProductDetail/ProductDetail';
+import Profile from '../pages/Profile/Profile';
+import Purchase from '../pages/Purchase/Purchase';
+import Search from '../pages/Search/Search';
+import Settings from '../pages/Settings/Settings';
 
 // Public routes
 const publicRoutes = [
@@ -35,8 +39,28 @@ const publicRoutes = [
     layout: NavOnly,
   },
   {
+    path: config.routes.setting,
+    component: Settings,
+    layout: NavOnly,
+  },
+  {
+    path: config.routes.profile,
+    component: Profile,
+    layout: NavOnly,
+  },
+  {
     path: config.routes.search,
     component: Search,
+  },
+  {
+    path: config.routes.login,
+    component: Login,
+    layout: Layout,
+  },
+  {
+    path: config.routes.register,
+    component: Login,
+    layout: Layout,
   },
 ];
 

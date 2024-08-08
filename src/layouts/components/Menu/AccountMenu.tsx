@@ -11,9 +11,10 @@ import * as React from 'react';
 import goGameImage from '../../../assets/images/gogame.jpeg';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import ReceiptIcon from '@mui/icons-material/Receipt';
-import PersonAdd from '@mui/icons-material/PersonAdd';
+// import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@mui/material';
 
 export default function AccountMenu() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -25,106 +26,147 @@ export default function AccountMenu() {
     setAnchorEl(null);
   };
 
+  const userLogin = false;
+
   const navigate = useNavigate();
   return (
-    <React.Fragment>
-      <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
-        <Tooltip disableFocusListener arrow title="Account settings">
-          <IconButton
-            onClick={handleClick}
-            size="small"
-            sx={{ ml: 2 }}
-            aria-controls={open ? 'account-menu' : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? 'true' : undefined}
+    <>
+      {userLogin ? (
+        <React.Fragment>
+          <Box
+            sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}
           >
-            <Avatar src={goGameImage} sx={{ width: 32, height: 32 }}>
-              G
-            </Avatar>
-          </IconButton>
+            <Tooltip disableFocusListener arrow title="Account settings">
+              <IconButton
+                onClick={handleClick}
+                size="small"
+                sx={{ ml: 2 }}
+                aria-controls={open ? 'account-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? 'true' : undefined}
+              >
+                <Avatar src={goGameImage} sx={{ width: 32, height: 32 }}>
+                  G
+                </Avatar>
+              </IconButton>
+            </Tooltip>
+          </Box>
+          <Menu
+            anchorEl={anchorEl}
+            id="account-menu"
+            open={open}
+            onClose={handleClose}
+            onClick={handleClose}
+            PaperProps={{
+              elevation: 0,
+              sx: {
+                overflow: 'visible',
+                filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                mt: 1.5,
+                '& .MuiAvatar-root': {
+                  width: 32,
+                  height: 32,
+                  ml: -0.5,
+                  mr: 1,
+                },
+                '&::before': {
+                  content: '""',
+                  display: 'block',
+                  position: 'absolute',
+                  top: 0,
+                  right: 14,
+                  width: 10,
+                  height: 10,
+                  bgcolor: 'background.paper',
+                  transform: 'translateY(-50%) rotate(45deg)',
+                  zIndex: 0,
+                },
+              },
+            }}
+            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+          >
+            <MenuItem
+              onClick={() => {
+                navigate(`/profile`);
+              }}
+            >
+              <Avatar /> Profile
+            </MenuItem>
+            {/* <MenuItem onClick={handleClose}>
+            <Avatar /> My account
+          </MenuItem> */}
+            <Divider />
+            <MenuItem
+              onClick={() => {
+                navigate(`/addnew`);
+              }}
+            >
+              <ListItemIcon>
+                <PostAddIcon />
+              </ListItemIcon>
+              Add new book
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                navigate(`/purchase`);
+              }}
+            >
+              <ListItemIcon>
+                <ReceiptIcon />
+              </ListItemIcon>
+              Purchased History
+            </MenuItem>
+            {/* <MenuItem onClick={handleClose}>
+            <ListItemIcon>
+              <PersonAdd />
+            </ListItemIcon>
+            Add another account
+          </MenuItem> */}
+            <MenuItem
+              onClick={() => {
+                navigate(`/setting`);
+              }}
+            >
+              <ListItemIcon>
+                <Settings />
+              </ListItemIcon>
+              Settings
+            </MenuItem>
+            <MenuItem onClick={handleClose}>
+              <ListItemIcon>
+                <Logout />
+              </ListItemIcon>
+              Logout
+            </MenuItem>
+          </Menu>
+        </React.Fragment>
+      ) : (
+        <Tooltip disableFocusListener arrow title="Login">
+          <Button
+            onClick={() => {
+              navigate(`/login`);
+            }}
+            sx={{
+              bgcolor: '#101010',
+              color: '#fff',
+              width: '100%',
+              height: '40px',
+              fontSize: '.875rem',
+              fontWeight: '700',
+              borderRadius: '2px',
+              padding: '0.5rem 1.875rem',
+              marginBottom:
+                location.pathname === '/register' ? '1.875rem' : '0',
+              '&:hover': {
+                bgcolor: '#101010',
+              },
+            }}
+          >
+            Login
+          </Button>
         </Tooltip>
-      </Box>
-      <Menu
-        anchorEl={anchorEl}
-        id="account-menu"
-        open={open}
-        onClose={handleClose}
-        onClick={handleClose}
-        PaperProps={{
-          elevation: 0,
-          sx: {
-            overflow: 'visible',
-            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-            mt: 1.5,
-            '& .MuiAvatar-root': {
-              width: 32,
-              height: 32,
-              ml: -0.5,
-              mr: 1,
-            },
-            '&::before': {
-              content: '""',
-              display: 'block',
-              position: 'absolute',
-              top: 0,
-              right: 14,
-              width: 10,
-              height: 10,
-              bgcolor: 'background.paper',
-              transform: 'translateY(-50%) rotate(45deg)',
-              zIndex: 0,
-            },
-          },
-        }}
-        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-      >
-        <MenuItem onClick={handleClose}>
-          <Avatar /> Profile
-        </MenuItem>
-        {/* <MenuItem onClick={handleClose}>
-          <Avatar /> My account
-        </MenuItem> */}
-        <Divider />
-        <MenuItem
-          onClick={() => {
-            navigate(`/addnew`);
-          }}
-        >
-          <ListItemIcon>
-            <PostAddIcon />
-          </ListItemIcon>
-          Add new book
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            navigate(`/purchase`);
-          }}
-        >
-          <ListItemIcon>
-            <ReceiptIcon />
-          </ListItemIcon>
-          Purchased History
-        </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <PersonAdd />
-          </ListItemIcon>
-          Add another account
-        </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <Settings />
-          </ListItemIcon>
-          Settings
-        </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <Logout />
-          </ListItemIcon>
-          Logout
-        </MenuItem>
-      </Menu>
-    </React.Fragment>
+      )}
+    </>
   );
 }
