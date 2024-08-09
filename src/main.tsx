@@ -13,16 +13,15 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <MultiProvider
       providers={[
-        <ThemeProvider theme={theme} />,
+        <ThemeProvider theme={theme.theme} />,
         <DataProvider children />,
         <CartProvider />,
         <ProductsProvider />,
       ]}
     >
       <GlobalStyles>
-        <CssBaseline>
-          <App />
-        </CssBaseline>
+        <CssBaseline />
+        <App />
       </GlobalStyles>
     </MultiProvider>
   </React.StrictMode>
