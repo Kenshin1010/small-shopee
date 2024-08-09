@@ -408,7 +408,7 @@ const styleButtonSocial: SxProps<Theme> = {
   outline: 'none',
   padding: '0 10px',
   margin: '5px 0',
-  '&:first-child': { marginRight: '5px' },
+  // '&:first-child': { marginRight: '5px' },
   width: '100%',
   textTransform: 'capitalize',
   display: 'flex',

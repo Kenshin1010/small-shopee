@@ -1,4 +1,4 @@
-import ProductContent from "../../layouts/components/ProductContent/ProductContent";
+import ProductContent from '../../layouts/components/ProductContent/ProductContent';
 
 function Home() {
   return (

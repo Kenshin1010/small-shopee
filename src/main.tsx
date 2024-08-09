@@ -20,8 +20,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       ]}
     >
       <GlobalStyles>
-        <CssBaseline />
-        <App />
+        <CssBaseline>
+          <App />
+        </CssBaseline>
       </GlobalStyles>
     </MultiProvider>
   </React.StrictMode>

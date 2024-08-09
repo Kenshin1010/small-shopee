@@ -16,6 +16,7 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import Settings from '@mui/icons-material/Settings';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
+import useUserLogin from '../../../hooks/useUserLogin';
 
 export default function AccountMenu() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -27,30 +28,7 @@ export default function AccountMenu() {
     setAnchorEl(null);
   };
 
-  const [userLogin, setUserLogin] = React.useState(() => {
-    // Read the value from localStorage when the component mounts
-    const storedLoginStatus = localStorage.getItem('userLogin');
-    return storedLoginStatus === 'true'; // Convert the value from string to boolean
-  });
-
-  const handleLogin = () => {
-    setUserLogin(true);
-  };
-  const handleLogout = () => {
-    setUserLogin(false);
-  };
-
-  React.useEffect(() => {
-    // Save the userLogin state to localStorage whenever it changes
-    localStorage.setItem('userLogin', userLogin.toString());
-    if (userLogin) {
-      console.log('User has logged in');
-      // Perform actions when the user logs in
-    } else {
-      console.log('User has logged out');
-      // Perform actions when the user logs out
-    }
-  }, [userLogin]); // Dependency array
+  const { userLogin, handleLogin, handleLogout } = useUserLogin();
 
   const navigate = useNavigate();
   return (
